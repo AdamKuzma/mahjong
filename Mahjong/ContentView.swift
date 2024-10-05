@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // MARK: - Main Content View
 struct ContentView: View {
@@ -27,7 +28,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            SheetContentView(selectedCount: viewModel.selectedTilesCount)
+            SheetContentView(viewModel: viewModel)  // Pass viewModel to SheetContentView
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled)
@@ -177,60 +178,206 @@ class MahjongViewModel: ObservableObject {
     
     
     @Published var dotTiles: [Tile] = [
-        Tile(name: "dot_1"), Tile(name: "dot_1"), Tile(name: "dot_1"), Tile(name: "dot_1"),
-        Tile(name: "dot_2"), Tile(name: "dot_2"), Tile(name: "dot_2"), Tile(name: "dot_2"),
-        Tile(name: "dot_3"), Tile(name: "dot_3"), Tile(name: "dot_3"), Tile(name: "dot_3"),
-        Tile(name: "dot_4"), Tile(name: "dot_4"), Tile(name: "dot_4"), Tile(name: "dot_4"),
-        Tile(name: "dot_5"), Tile(name: "dot_5"), Tile(name: "dot_5"), Tile(name: "dot_5"),
-        Tile(name: "dot_6"), Tile(name: "dot_6"), Tile(name: "dot_6"), Tile(name: "dot_6"),
-        Tile(name: "dot_7"), Tile(name: "dot_7"), Tile(name: "dot_7"), Tile(name: "dot_7"),
-        Tile(name: "dot_8"), Tile(name: "dot_8"), Tile(name: "dot_8"), Tile(name: "dot_8"),
-        Tile(name: "dot_9"), Tile(name: "dot_9"), Tile(name: "dot_9"), Tile(name: "dot_9")
+        Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+        
+        Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+        
+        Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+        
+        Tile(name: "dot_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "dot_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "dot_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "dot_4", suit: "dots", number: 4, isHonor: false),
+        
+        Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false),
+        
+        Tile(name: "dot_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "dot_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "dot_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "dot_6", suit: "dots", number: 6, isHonor: false),
+        
+        Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+        
+        Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false),
+        
+        Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
+        Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
+        Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
+        Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
     ]
     
     @Published var bambooTiles: [Tile] = [
-        Tile(name: "bamboo_1"), Tile(name: "bamboo_1"), Tile(name: "bamboo_1"), Tile(name: "bamboo_1"),
-        Tile(name: "bamboo_2"), Tile(name: "bamboo_2"), Tile(name: "bamboo_2"), Tile(name: "bamboo_2"),
-        Tile(name: "bamboo_3"), Tile(name: "bamboo_3"), Tile(name: "bamboo_3"), Tile(name: "bamboo_3"),
-        Tile(name: "bamboo_4"), Tile(name: "bamboo_4"), Tile(name: "bamboo_4"), Tile(name: "bamboo_4"),
-        Tile(name: "bamboo_5"), Tile(name: "bamboo_5"), Tile(name: "bamboo_5"), Tile(name: "bamboo_5"),
-        Tile(name: "bamboo_6"), Tile(name: "bamboo_6"), Tile(name: "bamboo_6"), Tile(name: "bamboo_6"),
-        Tile(name: "bamboo_7"), Tile(name: "bamboo_7"), Tile(name: "bamboo_7"), Tile(name: "bamboo_7"),
-        Tile(name: "bamboo_8"), Tile(name: "bamboo_8"), Tile(name: "bamboo_8"), Tile(name: "bamboo_8"),
-        Tile(name: "bamboo_9"), Tile(name: "bamboo_9"), Tile(name: "bamboo_9"), Tile(name: "bamboo_9")
+        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
+        
+        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
+        
+        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
+        
+        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
+        
+        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
+        
+        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
+        
+        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
+        
+        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
+        
+        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false),
+        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false),
+        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false),
+        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false)
     ]
     
     @Published var characterTiles: [Tile] = [
-        Tile(name: "character_1"), Tile(name: "character_1"), Tile(name: "character_1"), Tile(name: "character_1"),
-        Tile(name: "character_2"), Tile(name: "character_2"), Tile(name: "character_2"), Tile(name: "character_2"),
-        Tile(name: "character_3"), Tile(name: "character_3"), Tile(name: "character_3"), Tile(name: "character_3"),
-        Tile(name: "character_4"), Tile(name: "character_4"), Tile(name: "character_4"), Tile(name: "character_4"),
-        Tile(name: "character_5"), Tile(name: "character_5"), Tile(name: "character_5"), Tile(name: "character_5"),
-        Tile(name: "character_6"), Tile(name: "character_6"), Tile(name: "character_6"), Tile(name: "character_6"),
-        Tile(name: "character_7"), Tile(name: "character_7"), Tile(name: "character_7"), Tile(name: "character_7"),
-        Tile(name: "character_8"), Tile(name: "character_8"), Tile(name: "character_8"), Tile(name: "character_8"),
-        Tile(name: "character_9"), Tile(name: "character_9"), Tile(name: "character_9"), Tile(name: "character_9")
+        Tile(name: "character_1", suit: "characters", number: 1, isHonor: false),
+        Tile(name: "character_1", suit: "characters", number: 1, isHonor: false),
+        Tile(name: "character_1", suit: "characters", number: 1, isHonor: false),
+        Tile(name: "character_1", suit: "characters", number: 1, isHonor: false),
+        
+        Tile(name: "character_2", suit: "characters", number: 2, isHonor: false),
+        Tile(name: "character_2", suit: "characters", number: 2, isHonor: false),
+        Tile(name: "character_2", suit: "characters", number: 2, isHonor: false),
+        Tile(name: "character_2", suit: "characters", number: 2, isHonor: false),
+        
+        Tile(name: "character_3", suit: "characters", number: 3, isHonor: false),
+        Tile(name: "character_3", suit: "characters", number: 3, isHonor: false),
+        Tile(name: "character_3", suit: "characters", number: 3, isHonor: false),
+        Tile(name: "character_3", suit: "characters", number: 3, isHonor: false),
+        
+        Tile(name: "character_4", suit: "characters", number: 4, isHonor: false),
+        Tile(name: "character_4", suit: "characters", number: 4, isHonor: false),
+        Tile(name: "character_4", suit: "characters", number: 4, isHonor: false),
+        Tile(name: "character_4", suit: "characters", number: 4, isHonor: false),
+        
+        Tile(name: "character_5", suit: "characters", number: 5, isHonor: false),
+        Tile(name: "character_5", suit: "characters", number: 5, isHonor: false),
+        Tile(name: "character_5", suit: "characters", number: 5, isHonor: false),
+        Tile(name: "character_5", suit: "characters", number: 5, isHonor: false),
+        
+        Tile(name: "character_6", suit: "characters", number: 6, isHonor: false),
+        Tile(name: "character_6", suit: "characters", number: 6, isHonor: false),
+        Tile(name: "character_6", suit: "characters", number: 6, isHonor: false),
+        Tile(name: "character_6", suit: "characters", number: 6, isHonor: false),
+        
+        Tile(name: "character_7", suit: "characters", number: 7, isHonor: false),
+        Tile(name: "character_7", suit: "characters", number: 7, isHonor: false),
+        Tile(name: "character_7", suit: "characters", number: 7, isHonor: false),
+        Tile(name: "character_7", suit: "characters", number: 7, isHonor: false),
+        
+        Tile(name: "character_8", suit: "characters", number: 8, isHonor: false),
+        Tile(name: "character_8", suit: "characters", number: 8, isHonor: false),
+        Tile(name: "character_8", suit: "characters", number: 8, isHonor: false),
+        Tile(name: "character_8", suit: "characters", number: 8, isHonor: false),
+        
+        Tile(name: "character_9", suit: "characters", number: 9, isHonor: false),
+        Tile(name: "character_9", suit: "characters", number: 9, isHonor: false),
+        Tile(name: "character_9", suit: "characters", number: 9, isHonor: false),
+        Tile(name: "character_9", suit: "characters", number: 9, isHonor: false)
     ]
     
     @Published var windTiles: [Tile] = [
-        Tile(name: "east_wind"), Tile(name: "east_wind"), Tile(name: "east_wind"), Tile(name: "east_wind"),
-        Tile(name: "south_wind"), Tile(name: "south_wind"), Tile(name: "south_wind"), Tile(name: "south_wind"),
-        Tile(name: "west_wind"), Tile(name: "west_wind"), Tile(name: "west_wind"), Tile(name: "west_wind"),
-        Tile(name: "north_wind"), Tile(name: "north_wind"), Tile(name: "north_wind"), Tile(name: "north_wind")
+        Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+        
+        Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+        
+        Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+        
+        Tile(name: "north_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "north_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "north_wind", suit: "wind", number: nil, isHonor: true),
+        Tile(name: "north_wind", suit: "wind", number: nil, isHonor: true)
     ]
     
     @Published var dragonTiles: [Tile] = [
-        Tile(name: "red_dragon"), Tile(name: "red_dragon"), Tile(name: "red_dragon"), Tile(name: "red_dragon"),
-        Tile(name: "green_dragon"), Tile(name: "green_dragon"), Tile(name: "green_dragon"), Tile(name: "green_dragon"),
-        Tile(name: "white_dragon"), Tile(name: "white_dragon"), Tile(name: "white_dragon"), Tile(name: "white_dragon")
+        Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+        
+        Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+        
+        Tile(name: "white_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "white_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "white_dragon", suit: "dragon", number: nil, isHonor: true),
+        Tile(name: "white_dragon", suit: "dragon", number: nil, isHonor: true)
     ]
     
     @Published var flowerTiles: [Tile] = [
-        Tile(name: "plum_flower"), Tile(name: "orchid_flower"), Tile(name: "bamboo_flower"), Tile(name: "chrysanthemum_flower"),
-        Tile(name: "spring_season"), Tile(name: "summer_season"), Tile(name: "autumn_season"), Tile(name: "winter_season")
+        Tile(name: "plum_flower", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "orchid_flower", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "bamboo_flower", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "chrysanthemum_flower", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "spring_season", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "summer_season", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "autumn_season", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "winter_season", suit: "flower", number: nil, isHonor: false)
     ]
     
     @Published var selectedTilesCount = 0
+    
+    // Function to fetch all selected tiles
+    func allSelectedTiles() -> [Tile] {
+        return dotTiles.filter { $0.state == .selected } +
+               bambooTiles.filter { $0.state == .selected } +
+               characterTiles.filter { $0.state == .selected } +
+               windTiles.filter { $0.state == .selected } +
+               dragonTiles.filter { $0.state == .selected }
+    }
     
     // This function handles tile selection for non-flower tiles
     func toggleTileState(index: Int, for category: TileCategory) {
@@ -268,6 +415,9 @@ class MahjongViewModel: ObservableObject {
                 tiles[index].state = .unselected
             }
         }
+        
+        // Trigger haptic feedback when tile state changes
+        triggerHapticFeedback()
 
         // Assign the updated array back to the right property
         switch category {
@@ -327,6 +477,12 @@ class MahjongViewModel: ObservableObject {
             return
         }
     }
+    
+    // Function to trigger haptic feedback
+    private func triggerHapticFeedback() {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+    }
 }
 
 // MARK: - Tile Model and Views
@@ -334,6 +490,11 @@ struct Tile: Identifiable {
     let id = UUID()
     let name: String
     var state: MahjongTileView.TileState = .unselected
+    
+    // New properties to support the scoring algorithm
+    var suit: String  // e.g., "dots", "bamboo", "characters", "wind", "dragon"
+    var number: Int?  // Number for numbered tiles (e.g., 1-9), nil for winds/dragons
+    var isHonor: Bool // True if the tile is a wind or dragon, false otherwise
 }
 
 struct MahjongTileView: View {
@@ -345,7 +506,7 @@ struct MahjongTileView: View {
     }
     
     var body: some View {
-        Image("placeholder")
+        Image(tileName)
             .resizable()
             .scaledToFit()
             .frame(width: 70, height: 100)
@@ -426,7 +587,9 @@ struct StickyBarView: View {
 
 // MARK: - Sheet Content View
 struct SheetContentView: View {
-    let selectedCount: Int
+    @ObservedObject var viewModel: MahjongViewModel  // ViewModel correctly passed
+    @State private var validationMessage: String = "Score will show here"  // State to hold validation message
+    let scoreCalculator = ScoreCalculator()
     
     var body: some View {
         VStack(spacing: 20) {
@@ -434,19 +597,20 @@ struct SheetContentView: View {
                 Text("Your Hand")
                     .font(.headline)
                 Spacer()
-                Text("\(selectedCount)/14")
+                Text("\(viewModel.selectedTilesCount)/14")  // Show selected tile count
                     .font(.headline)
             }
             
-            Text("Score will show here")
+            Text(validationMessage)  // Display validation message
                 .font(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             Spacer()
             
             Button(action: {
-                // Add your score calculation logic here
-                print("Calculating score...")
+                // Validate the selected tiles and update the message
+                let selectedTiles = viewModel.allSelectedTiles()  // Fetch the selected tiles
+                validationMessage = scoreCalculator.validateHand(tiles: selectedTiles)  // Update message
             }) {
                 Text("Calculate Score")
                     .font(.headline)

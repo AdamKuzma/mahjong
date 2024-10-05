@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "dot4_1x.png",
+      "filename" : "bamboo3_1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "dot4_2x.png",
+      "filename" : "bamboo3_2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "dot4_3x.png",
+      "filename" : "bamboo3_3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

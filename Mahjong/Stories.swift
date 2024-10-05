@@ -18,7 +18,22 @@
 //
 
 
+// MARK: - Basic Hand Validation
+
+//    Check hand has 14 tiles
+//    If not: "Please select 14 tiles"
+//
+//    Check hand has a valid 4 set + 1 pair or 7 pair structure 
+//    If not: "You don't have a winning combination"
+
+//    Identify Sets
+//    Identify all chows, pungs, and kongs
+//    Identify the pair
+
+
 // MARK: - Evaluate Hand Composition
+
+//    Once Basic hand validation is approved:
 
 //     All Chows (平和 - Ping Hu):
 //    If the hand consists of only chows and a pair, award 1 point (valid hand)
