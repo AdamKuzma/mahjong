@@ -17,7 +17,7 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             ScrollView {
                 VStack(spacing: 0) {
-                    HeaderView()
+                    HeaderView(viewModel: viewModel)
                     TileSectionView(viewModel: viewModel)
                 }
                 .padding()
@@ -39,13 +39,29 @@ struct ContentView: View {
 
 // MARK: - Header View
 struct HeaderView: View {
+    @ObservedObject var viewModel: MahjongViewModel
+    
     var body: some View {
-        Text("Hand Score")
-            .font(.title2)
-            .fontWeight(.semibold)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 30)
-            .padding(.horizontal, 10)
+        HStack {
+            Text("Hand Score")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            Spacer() // Pushes the "X" icon to the right end
+            
+            Button(action: {
+                viewModel.resetTiles() // Call the reset method on the view model
+            }) {
+                Image(systemName: "xmark.circle")
+                    .font(.title2)
+                    .foregroundColor(.red) // You can change the color as you prefer
+            }
+        }
+        .font(.title2)
+        .fontWeight(.semibold)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 30)
+        .padding(.horizontal, 10)
     }
 }
 
@@ -482,6 +498,17 @@ class MahjongViewModel: ObservableObject {
     private func triggerHapticFeedback() {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
+    }
+    
+    func resetTiles() {
+        dotTiles = dotTiles.map { Tile(name: $0.name, state: .unselected, suit: $0.suit, number: $0.number, isHonor: $0.isHonor) }
+        bambooTiles = bambooTiles.map { Tile(name: $0.name, state: .unselected, suit: $0.suit, number: $0.number, isHonor: $0.isHonor) }
+        characterTiles = characterTiles.map { Tile(name: $0.name, state: .unselected, suit: $0.suit, number: $0.number, isHonor: $0.isHonor) }
+        windTiles = windTiles.map { Tile(name: $0.name, state: .unselected, suit: $0.suit, number: $0.number, isHonor: $0.isHonor) }
+        dragonTiles = dragonTiles.map { Tile(name: $0.name, state: .unselected, suit: $0.suit, number: $0.number, isHonor: $0.isHonor) }
+        flowerTiles = flowerTiles.map { Tile(name: $0.name, state: .unselected, suit: $0.suit, number: $0.number, isHonor: $0.isHonor) }
+        
+        selectedTilesCount = 0 // Reset the selected tile count
     }
 }
 

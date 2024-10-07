@@ -65,3 +65,19 @@
 //
 //
 //
+
+// MARK: - Tests
+
+
+// [FAIL] - Thirteen Orphans - Gets recognized as Mixed One Suit
+
+// [FAIL] - Pure Hand - When selecting 4 pungs of Dot and a pair of Bamboo is mistakes as a Pure Hand. When selecting pair of Characters it counts as invalid hand
+// [FAIL] - Pure Hand - When selecting 4 pairs of Winds and 2 Pungs of Dots, it mistakes as a Pure Hand.
+
+// [FAIL] - Seven Pairs - Only recognizes unique pairs
+
+// [FAIL] - Mixed One Suit - Always gets recognized as a Pure Hand
+
+// Switching between accordions messes up the disabled state
+
+// Disabled state triggers haptic feedback
