@@ -33,27 +33,38 @@
 
 // MARK: - Evaluate Hand Composition
 
-//    Once Basic hand validation is approved:
+
+//    Basic Winning Hands:
 
 //     All Chows (平和 - Ping Hu):
 //    If the hand consists of only chows and a pair, award 1 point (valid hand)
-//     Pure Hand (清一色 - Qing Yi Se):
-//    If all tiles are from a single suit, award 7 points. 
-//    Mixed One Suit (混一色 - Hun Yi Se):
-//    If all tiles are from one suit plus honors, award 3 points.
-//
+
 //    Seven Pairs (七對子 - Qi Dui Zi):
 //    If the hand consists of 7 pairs, award 4 points.
-//
+
 //    Thirteen Orphans (十三幺 - Shi San Yao):
 //    If the hand is a valid Thirteen Orphans, award 13 points.
-//     
+
+
+
+//    Special Winning Hands:
+
+//    Mixed One Suit (混一色 - Hun Yi Se):
+//    If all tiles are from one suit plus honors, award 3 points.
+
+//     Pure Hand (清一色 - Qing Yi Se):
+//    If all tiles are from a single suit, award 7 points. 
+
+
+
 //    Honor Tile Bonuses:
+
 //    For each pung of dragons, award 1 point.
 //    For a pung of the player's seat wind, award 1 point.
 //    For a pung of the prevailing wind, award 1 point.
-//
-//
+
+
+
 //    Additional Inputs:
 //    Self-Draw (自摸 - Zi Mo): If the player drew the winning tile, add 1 point.
 //    Fully Concealed Hand (門前清 - Men Qian Qing): If no tiles were claimed from discards, add 1 point.
@@ -66,18 +77,32 @@
 //
 //
 
-// MARK: - Tests
+// MARK: - To Do
+
+// [DONE] - Switching between accordions messes up the disabled state
+// [DONE] - Disabled state triggers haptic feedback
+// [DONE] - Have clear icon appear only once a tile is selected
+// [DONE] - Hide the "Score will show here"
 
 
-// [FAIL] - Thirteen Orphans - Gets recognized as Mixed One Suit
 
-// [FAIL] - Pure Hand - When selecting 4 pungs of Dot and a pair of Bamboo is mistakes as a Pure Hand. When selecting pair of Characters it counts as invalid hand
-// [FAIL] - Pure Hand - When selecting 4 pairs of Winds and 2 Pungs of Dots, it mistakes as a Pure Hand.
+// TODAY:
 
-// [FAIL] - Seven Pairs - Only recognizes unique pairs
+// Have a sticky header after scroll - ???
 
-// [FAIL] - Mixed One Suit - Always gets recognized as a Pure Hand
+// Research and define the precise rules for scoring
 
-// Switching between accordions messes up the disabled state
 
-// Disabled state triggers haptic feedback
+
+
+
+
+
+
+// One accordion open at a time
+
+// Swipe right to select pung and kong (difficult)
+
+// Add Flowers
+
+// Fix algorithm to recognize all pung hand as winning hand

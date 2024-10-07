@@ -49,16 +49,17 @@ struct HeaderView: View {
             
             Spacer() // Pushes the "X" icon to the right end
             
-            Button(action: {
-                viewModel.resetTiles() // Call the reset method on the view model
-            }) {
-                Image(systemName: "xmark.circle")
-                    .font(.title2)
-                    .foregroundColor(.red) // You can change the color as you prefer
+            if viewModel.selectedTilesCount > 0 {
+                Button(action: {
+                    viewModel.resetTiles() // Call the reset method on the view model
+                    HapticFeedbackManager.triggerLightFeedback() // Trigger haptic feedback
+                }) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.title3)
+                        .foregroundColor(.white) // You can change the color as you prefer
+                }
             }
         }
-        .font(.title2)
-        .fontWeight(.semibold)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 30)
         .padding(.horizontal, 10)
@@ -173,6 +174,8 @@ struct TileAccordionView: View {
     let title: String
     @Binding var tiles: [Tile]
     let onTileTap: (Int) -> Void
+    @State private var isDragging = false
+    @State private var activeTileIndex: Int? = nil
     
     var body: some View {
         AccordionView(title: title) {
@@ -241,50 +244,50 @@ class MahjongViewModel: ObservableObject {
     ]
     
     @Published var bambooTiles: [Tile] = [
-        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
-        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
-        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
-        Tile(name: "bamboo_1", suit: "dots", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "bamboo", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "bamboo", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "bamboo", number: 1, isHonor: false),
+        Tile(name: "bamboo_1", suit: "bamboo", number: 1, isHonor: false),
         
-        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
-        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
-        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
-        Tile(name: "bamboo_2", suit: "dots", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "bamboo", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "bamboo", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "bamboo", number: 2, isHonor: false),
+        Tile(name: "bamboo_2", suit: "bamboo", number: 2, isHonor: false),
         
-        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
-        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
-        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
-        Tile(name: "bamboo_3", suit: "dots", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "bamboo", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "bamboo", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "bamboo", number: 3, isHonor: false),
+        Tile(name: "bamboo_3", suit: "bamboo", number: 3, isHonor: false),
         
-        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
-        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
-        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
-        Tile(name: "bamboo_4", suit: "dots", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "bamboo", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "bamboo", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "bamboo", number: 4, isHonor: false),
+        Tile(name: "bamboo_4", suit: "bamboo", number: 4, isHonor: false),
         
-        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
-        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
-        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
-        Tile(name: "bamboo_5", suit: "dots", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "bamboo", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "bamboo", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "bamboo", number: 5, isHonor: false),
+        Tile(name: "bamboo_5", suit: "bamboo", number: 5, isHonor: false),
         
-        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
-        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
-        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
-        Tile(name: "bamboo_6", suit: "dots", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "bamboo", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "bamboo", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "bamboo", number: 6, isHonor: false),
+        Tile(name: "bamboo_6", suit: "bamboo", number: 6, isHonor: false),
         
-        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
-        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
-        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
-        Tile(name: "bamboo_7", suit: "dots", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "bamboo", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "bamboo", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "bamboo", number: 7, isHonor: false),
+        Tile(name: "bamboo_7", suit: "bamboo", number: 7, isHonor: false),
         
-        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
-        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
-        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
-        Tile(name: "bamboo_8", suit: "dots", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "bamboo", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "bamboo", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "bamboo", number: 8, isHonor: false),
+        Tile(name: "bamboo_8", suit: "bamboo", number: 8, isHonor: false),
         
-        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false),
-        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false),
-        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false),
-        Tile(name: "bamboo_9", suit: "dots", number: 9, isHonor: false)
+        Tile(name: "bamboo_9", suit: "bamboo", number: 9, isHonor: false),
+        Tile(name: "bamboo_9", suit: "bamboo", number: 9, isHonor: false),
+        Tile(name: "bamboo_9", suit: "bamboo", number: 9, isHonor: false),
+        Tile(name: "bamboo_9", suit: "bamboo", number: 9, isHonor: false)
     ]
     
     @Published var characterTiles: [Tile] = [
@@ -413,6 +416,12 @@ class MahjongViewModel: ObservableObject {
         case .flowers:
             tiles = flowerTiles // Handle flower tiles separately
         }
+        
+        // Check if the tile is in the disabled state, and if so, return early
+        if tiles[index].state == .disabled {
+            return // Do nothing if the tile is disabled
+        }
+
 
         // Only count non-flower tiles in the hand
         if category != .flowers {
@@ -431,9 +440,9 @@ class MahjongViewModel: ObservableObject {
                 tiles[index].state = .unselected
             }
         }
-        
+
         // Trigger haptic feedback when tile state changes
-        triggerHapticFeedback()
+        HapticFeedbackManager.triggerLightFeedback()
 
         // Assign the updated array back to the right property
         switch category {
@@ -451,7 +460,17 @@ class MahjongViewModel: ObservableObject {
             flowerTiles = tiles
         }
 
-        updateTileStates(for: category)
+        // Update all tile states to reflect changes in selection
+        updateAllTileStates()
+    }
+
+    private func updateAllTileStates() {
+        updateTileStates(for: .dots)
+        updateTileStates(for: .bamboo)
+        updateTileStates(for: .characters)
+        updateTileStates(for: .winds)
+        updateTileStates(for: .dragons)
+        updateTileStates(for: .flowers)
     }
 
     private func updateTileStates(for category: TileCategory) {
@@ -492,12 +511,6 @@ class MahjongViewModel: ObservableObject {
         case .flowers:
             return
         }
-    }
-    
-    // Function to trigger haptic feedback
-    private func triggerHapticFeedback() {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
     }
     
     func resetTiles() {
@@ -573,7 +586,7 @@ struct AccordionView<Content: View>: View {
                         .foregroundColor(.white)
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                        .foregroundColor(.white)
+                        .foregroundStyle(Color(UIColor.systemGray2))
                 }
                 .padding(.vertical, 20)
                 .padding(.horizontal, 10)
@@ -603,8 +616,12 @@ struct StickyBarView: View {
                 Text("\(selectedCount)/14")
                     .font(.headline)
             }
-            .padding()
-            .background(Color(UIColor.systemGray6))
+            .padding(.vertical, 20)
+            .padding(.horizontal, 24)
+            .background(
+                Color.black.opacity(0.3)
+            )
+            .background(.thinMaterial)
             .onTapGesture {
                 onTap()
             }
@@ -612,10 +629,11 @@ struct StickyBarView: View {
     }
 }
 
+
 // MARK: - Sheet Content View
 struct SheetContentView: View {
     @ObservedObject var viewModel: MahjongViewModel  // ViewModel correctly passed
-    @State private var validationMessage: String = "Score will show here"  // State to hold validation message
+    @State private var validationMessage: String = ""  // State to hold validation message
     let scoreCalculator = ScoreCalculator()
     
     var body: some View {
@@ -635,8 +653,12 @@ struct SheetContentView: View {
             Spacer()
             
             Button(action: {
+                // Trigger haptic feedback when the button is pressed
+                HapticFeedbackManager.triggerLightFeedback()
+                
                 // Validate the selected tiles and update the message
                 let selectedTiles = viewModel.allSelectedTiles()  // Fetch the selected tiles
+                print("Tiles before validation in app: \(selectedTiles)")
                 validationMessage = scoreCalculator.validateHand(tiles: selectedTiles)  // Update message
             }) {
                 Text("Calculate Score")

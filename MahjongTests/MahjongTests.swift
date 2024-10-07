@@ -46,6 +46,12 @@ class ScoreCalculatorTests: XCTestCase {
         XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Mixed One Suit hand was not caught.")
     }
     
+    func testDragonInvalidMixedOneSuitHand() {
+        let tiles = createDragonInvalidMixedOneSuitHand()
+        let result = scoreCalculator.validateHand(tiles: tiles)
+        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Mixed One Suit hand with multiple dragons was not caught.")
+    }
+    
     func testPureHand() {
         let tiles = createPureHand()
         let result = scoreCalculator.validateHand(tiles: tiles)
@@ -165,6 +171,26 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
             Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
             Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false) // Pair
+        ]
+    }
+    
+    // Helper function to create another invalid Mixed One Suit hand with multiple dragons
+    func createDragonInvalidMixedOneSuitHand() -> [Tile] {
+        return [
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+            Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+            Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+            Tile(name: "dot_4", suit: "dots", number: 4, isHonor: false),
+            Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false),
+            Tile(name: "dot_6", suit: "dots", number: 6, isHonor: false),
+            Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+            Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+            Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
+            Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false),
+            Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
+            Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "white_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true) // Different Dragons is not a valid meld
         ]
     }
     

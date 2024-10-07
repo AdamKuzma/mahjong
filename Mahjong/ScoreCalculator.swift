@@ -12,38 +12,48 @@ class ScoreCalculator {
     // MARK: - Score Messages
     
     // Validates if the hand has a valid structure and determines its type
+    
     func validateHand(tiles: [Tile]) -> String {
         // Step 1: Check if there are 14 tiles
         guard tiles.count == 14 else {
+            print("Invalid hand size. Current tile count: \(tiles.count)")
             return "Please select 14 tiles"
         }
         
+        print("Validating hand with tiles: \(tiles)")
+        
         // Step 2: Check for Thirteen Orphans (highest priority)
         if isThirteenOrphans(tiles) {
+            print("Hand qualifies as Thirteen Orphans")
             return "You get 13 Points for Thirteen Orphans Hand"
         }
         
         // Step 3: Check for Seven Pairs
         if isValidSevenPairs(tiles) {
+            print("Hand qualifies as Seven Pairs")
             return "You get 4 Points for Seven Pairs"
         }
         
         // Step 4: Check for Pure Hand (all tiles in a single suit)
         if isPureHand(tiles) {
+            print("Hand qualifies as Pure Hand")
             return "You get 7 Points for Pure Hand"
         }
         
         // Step 5: Check for Mixed One Suit (single suit plus honors)
         if isMixedOneSuit(tiles) {
+            print("Hand qualifies as Mixed One Suit")
             return "You get 3 Points for Mixed One Suit"
         }
         
         // Step 6: Check for All Chows (valid chows with one pair)
         if isValidFourSetsOnePair(tiles) && isAllChows(tiles) {
+            print("Hand qualifies as All Chows")
             return "You get 1 Point for All Chow Hand"
         }
         
         // Step 7: Default response if no valid hand is found
+        print("No winning hand found for tiles: \(tiles)")
         return "Oh no! You don't have a winning combination"
     }
     
@@ -106,13 +116,16 @@ class ScoreCalculator {
     
     //MARK: - Pure Hand
     
-    // Check if the hand is a Pure Hand (all tiles in a single suit)
+    // Check if the hand is a Pure Hand (all tiles in a single suit without any honors)
     private func isPureHand(_ tiles: [Tile]) -> Bool {
-        let suits = Set(tiles.filter { !$0.isHonor }.map { $0.suit })
-        let hasNoHonorTiles = tiles.allSatisfy { !$0.isHonor }
-        
-        // Pure hand should only contain one suit and no honor tiles
-        return suits.count == 1 && hasNoHonorTiles
+        let suitTiles = tiles.filter { !$0.isHonor } // Filter out any honor tiles
+        let suits = Set(suitTiles.map { $0.suit })  // Get unique suits in the hand
+
+        let hasOnlyOneSuit = suits.count == 1       // Ensure only one suit is present
+        let containsHonors = tiles.contains { $0.isHonor } // Check if there are any honor tiles
+
+        // A Pure Hand should have tiles only from one suit and no honors
+        return hasOnlyOneSuit && !containsHonors
     }
     
     
@@ -127,8 +140,13 @@ class ScoreCalculator {
         let suitCount = Set(suitTiles.map { $0.suit }).count
         let hasHonors = !honorTiles.isEmpty
         
+        // Ensure all honor tiles are of the same specific type (either only red dragons, green dragons, white dragons, or a specific wind)
+        let dragonTypes = Set(honorTiles.filter { $0.suit == "dragon" }.map { $0.name })
+        let windTypes = Set(honorTiles.filter { $0.suit == "wind" }.map { $0.name })
+        let hasSingleHonorType = (dragonTypes.count <= 1) && (windTypes.count <= 1)
+
         // Ensure it doesn't match Thirteen Orphans or other special cases
-        return suitCount == 1 && hasHonors && !isThirteenOrphans(tiles) && !isValidSevenPairs(tiles)
+        return suitCount == 1 && hasHonors && hasSingleHonorType && !isThirteenOrphans(tiles) && !isValidSevenPairs(tiles)
     }
     
     
