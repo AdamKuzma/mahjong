@@ -387,6 +387,8 @@ class MahjongViewModel: ObservableObject {
         Tile(name: "winter_season", suit: "flower", number: nil, isHonor: false)
     ]
     
+    @Published var selectedSeatWind: AdditionalView.SeatWind = .east
+    
     @Published var selectedTilesCount = 0
     
     // Function to fetch all selected tiles
@@ -632,8 +634,10 @@ struct StickyBarView: View {
 
 // MARK: - Sheet Content View
 struct SheetContentView: View {
-    @ObservedObject var viewModel: MahjongViewModel  // ViewModel correctly passed
-    @State private var validationMessage: String = ""  // State to hold validation message
+    @ObservedObject var viewModel: MahjongViewModel
+    @State private var handMessage: String = ""
+    @State private var handPoints: Int = 0
+    @State private var flowerPoints: Int = 0
     let scoreCalculator = ScoreCalculator()
     
     var body: some View {
@@ -646,10 +650,55 @@ struct SheetContentView: View {
                     .font(.headline)
             }
             
-            Text(validationMessage)  // Display validation message
-                .font(.body)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            Divider()
             
+            // Hand Points
+            HStack {
+                Text(handMessage)
+                    .font(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Spacer()
+                
+                if handPoints > 0 {
+                    Text("\(handPoints)")
+                }
+            }
+            
+            // Flower Points
+            if flowerPoints > 0 {
+                Divider()
+                
+                HStack {
+                    Text("Flower Points")
+                        .font(.body)
+                        .foregroundColor(.green)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    Text("+\(flowerPoints)")
+                        .font(.body)
+                        .foregroundColor(.green)
+                }
+            }
+            
+            // Total Points
+            if handPoints > 0 {
+                Divider()
+                
+                HStack {
+                    Text("Total points")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    Text("\(handPoints + flowerPoints)")
+                        .font(.headline)
+                }
+            }
+                
             Spacer()
             
             Button(action: {
@@ -657,9 +706,15 @@ struct SheetContentView: View {
                 HapticFeedbackManager.triggerLightFeedback()
                 
                 // Validate the selected tiles and update the message
-                let selectedTiles = viewModel.allSelectedTiles()  // Fetch the selected tiles
-                print("Tiles before validation in app: \(selectedTiles)")
-                validationMessage = scoreCalculator.validateHand(tiles: selectedTiles)  // Update message
+                let selectedTiles = viewModel.allSelectedTiles()
+                let selectedFlowerTiles = viewModel.flowerTiles.filter { $0.state == .selected }
+                
+                // Unpack the tuple into three variables
+                let (message, handPts, flowerPts) = scoreCalculator.validateHand(tiles: selectedTiles, selectedSeatWind: viewModel.selectedSeatWind, selectedFlowerTiles: selectedFlowerTiles)
+                                
+                handMessage = message  // Update the hand message
+                handPoints = handPts    // Update the hand points
+                flowerPoints = flowerPts  // Update the flower points
             }) {
                 Text("Calculate Score")
                     .font(.headline)
@@ -676,6 +731,7 @@ struct SheetContentView: View {
         .padding(.top, 30)
     }
 }
+
 
 // MARK: - Preview
 #Preview {

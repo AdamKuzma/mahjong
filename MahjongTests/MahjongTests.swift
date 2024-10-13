@@ -24,68 +24,74 @@ class ScoreCalculatorTests: XCTestCase {
 
     func testAllChowsHand() {
         let tiles = createAllChowsHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "You get 1 Point for All Chow Hand", "All Chows hand did not validate correctly.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "You get 1 Point for All Chow Hand", "All Chows hand did not validate correctly.")
+    }
+    
+    func testAllTripletsHand() {
+        let tiles = createAllTripletsHand()
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "You get 3 Points for All Triplets", "All Triplets hand did not validate correctly.")
     }
 
     func testInvalidAllChowsHand() {
         let tiles = createInvalidAllChowsHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid All Chows hand was not caught.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "Oh no! You don't have a winning combination", "Invalid All Chows hand was not caught.")
     }
 
     func testMixedOneSuitHand() {
         let tiles = createMixedOneSuitHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "You get 3 Points for Mixed One Suit", "Mixed one suit hand did not validate correctly.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "You get 3 Points for Mixed One Suit", "Mixed One Suit hand did not validate correctly.")
     }
     
     func testInvalidMixedOneSuitHand() {
         let tiles = createInvalidMixedOneSuitHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Mixed One Suit hand was not caught.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "Oh no! You don't have a winning combination", "Invalid Mixed One Suit hand was not caught.")
     }
     
     func testDragonInvalidMixedOneSuitHand() {
         let tiles = createDragonInvalidMixedOneSuitHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Mixed One Suit hand with multiple dragons was not caught.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "Oh no! You don't have a winning combination", "Invalid Mixed One Suit hand with multiple dragons was not caught.")
     }
     
     func testPureHand() {
         let tiles = createPureHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "You get 7 Points for Pure Hand", "Pure hand did not validate correctly.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "You get 7 Points for Pure Hand", "Pure hand did not validate correctly.")
     }
     
     func testInvalidPureHand() {
         let tiles = createInvalidPureHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Pure Hand was not caught.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "Oh no! You don't have a winning combination", "Invalid Pure Hand was not caught.")
     }
 
     func testSevenPairsHand() {
         let tiles = createSevenPairsHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "You get 4 Points for Seven Pairs", "Seven pairs hand did not validate correctly.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "You get 4 Points for Seven Pairs", "Seven pairs hand did not validate correctly.")
     }
     
     func testInvalidSevenPairsHand() {
         let tiles = createInvalidSevenPairsHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Seven Pairs hand was not caught.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "Oh no! You don't have a winning combination", "Invalid Seven Pairs hand was not caught.")
     }
 
     func testThirteenOrphansHand() {
         let tiles = createThirteenOrphansHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "You get 13 Points for Thirteen Orphans Hand", "Thirteen Orphans hand did not validate correctly.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "You get 13 Points for Thirteen Orphans Hand", "Thirteen Orphans hand did not validate correctly.")
     }
     
     func testInvalidThirteenOrphansHand() {
         let tiles = createInvalidThirteenOrphansHand()
-        let result = scoreCalculator.validateHand(tiles: tiles)
-        XCTAssertEqual(result, "Oh no! You don't have a winning combination", "Invalid Thirteen Orphans hand was not caught.")
+        let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedFlowerTiles: [])
+        XCTAssertEqual(result.0, "Oh no! You don't have a winning combination", "Invalid Thirteen Orphans hand was not caught.")
     }
 
     // Helper Methods to Create Specific Hands for Testing
@@ -109,6 +115,26 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
             Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
             Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false)
+        ]
+    }
+    
+    // Helper function to create a hand with all triplets (pongs)
+    func createAllTripletsHand() -> [Tile] {
+        return [
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
+            Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+            Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+            Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
+            Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+            Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+            Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true) // The pair
         ]
     }
     

@@ -13,48 +13,107 @@ class ScoreCalculator {
     
     // Validates if the hand has a valid structure and determines its type
     
-    func validateHand(tiles: [Tile]) -> String {
+    func validateHand(tiles: [Tile], selectedSeatWind: AdditionalView.SeatWind, selectedFlowerTiles: [Tile]) -> (String, Int, Int) {
+        
+        // Variable to hold the total score
+        var totalPoints = 0
+        var handMessage = ""
+        
+        
         // Step 1: Check if there are 14 tiles
         guard tiles.count == 14 else {
             print("Invalid hand size. Current tile count: \(tiles.count)")
-            return "Please select 14 tiles"
+            return ("Please select 14 tiles", 0, 0) // Returning a tuple
         }
         
         print("Validating hand with tiles: \(tiles)")
         
-        // Step 2: Check for Thirteen Orphans (highest priority)
+        
+        // Check for hand type points
         if isThirteenOrphans(tiles) {
-            print("Hand qualifies as Thirteen Orphans")
-            return "You get 13 Points for Thirteen Orphans Hand"
+            handMessage = "Thirteen Orphans Hand (十三么)"
+            totalPoints += 13
+        } else if isValidSevenPairs(tiles) {
+            handMessage = "Seven Pair Hand (七對子)"
+            totalPoints += 4
+        } else if isPureHand(tiles) {
+            handMessage = "Pure Hand (清一色)"
+            totalPoints += 7
+        } else if isMixedOneSuit(tiles) {
+            handMessage = "Mixed One Suit Hand (混一色)"
+            totalPoints += 3
+        } else if isAllTriplets(tiles) {
+            handMessage = "All Triplets Hand"
+            totalPoints += 3
+        } else if isAllChows(tiles) {
+            handMessage = "All Chow Hand"
+            totalPoints += 1
+        } else {
+            handMessage = "Oh no! You don't have a winning combination"
+        }
+
+        // Calculate additional points from flower tiles
+        let flowerPoints = calculateFlowerPoints(selectedFlowerTiles: selectedFlowerTiles, selectedSeatWind: selectedSeatWind)
+
+        // Return the hand message, hand points, and flower points separately
+        return (handMessage, totalPoints, flowerPoints)
+    }
+    
+    
+    //MARK: - Flower Counter
+    
+    // Function to calculate points from flower tiles
+    func calculateFlowerPoints(selectedFlowerTiles: [Tile], selectedSeatWind: AdditionalView.SeatWind) -> Int {
+        var flowerPoints = 0
+        
+        // Check if selected flowers correspond to the seat wind
+        let seatWindFlowerTiles = getFlowerTilesForSeatWind(selectedSeatWind)
+        
+        for tile in selectedFlowerTiles {
+            if seatWindFlowerTiles.contains(tile.name) {
+                flowerPoints += 1
+            }
         }
         
-        // Step 3: Check for Seven Pairs
-        if isValidSevenPairs(tiles) {
-            print("Hand qualifies as Seven Pairs")
-            return "You get 4 Points for Seven Pairs"
+        return flowerPoints
+    }
+    
+    // Return the corresponding flower tiles for a given seat wind
+    private func getFlowerTilesForSeatWind(_ seatWind: AdditionalView.SeatWind) -> [String] {
+        switch seatWind {
+        case .east:
+            return ["plum_flower", "spring_season"]
+        case .south:
+            return ["orchid_flower", "summer_season"]
+        case .west:
+            return ["chrysanthemum_flower", "autumn_season"]
+        case .north:
+            return ["bamboo_flower", "winter_season"]
         }
+    }
+    
+    
+    // MARK: - All Triplets (All Pungs)
         
-        // Step 4: Check for Pure Hand (all tiles in a single suit)
-        if isPureHand(tiles) {
-            print("Hand qualifies as Pure Hand")
-            return "You get 7 Points for Pure Hand"
+    // Check if the hand consists of four pungs and a pair
+    private func isAllTriplets(_ tiles: [Tile]) -> Bool {
+        var remainingTiles = tiles
+        var pungsCount = 0
+
+        // Try to extract 4 pung sets
+        for _ in 0..<4 {
+            if let pung = findPung(in: remainingTiles) {
+                pungsCount += 1
+                remainingTiles = removeTiles(pung, from: remainingTiles)
+            } else {
+                return false // If we can't find 4 pungs, it's not an All Triplets hand
+            }
         }
-        
-        // Step 5: Check for Mixed One Suit (single suit plus honors)
-        if isMixedOneSuit(tiles) {
-            print("Hand qualifies as Mixed One Suit")
-            return "You get 3 Points for Mixed One Suit"
-        }
-        
-        // Step 6: Check for All Chows (valid chows with one pair)
-        if isValidFourSetsOnePair(tiles) && isAllChows(tiles) {
-            print("Hand qualifies as All Chows")
-            return "You get 1 Point for All Chow Hand"
-        }
-        
-        // Step 7: Default response if no valid hand is found
-        print("No winning hand found for tiles: \(tiles)")
-        return "Oh no! You don't have a winning combination"
+
+        // After extracting 4 pungs, check if the remaining tiles form a pair
+        let result = isPair(remainingTiles)
+        print("Final remaining tiles: \(remainingTiles), Is pair: \(result)")
+        return result
     }
     
     
@@ -157,6 +216,8 @@ class ScoreCalculator {
         let tileCounts = Dictionary(grouping: tiles) { $0.name }.mapValues { $0.count }
         return tileCounts.values.filter { $0 == 2 }.count == 7
     }
+    
+    
     
     
     // Check if the hand has 4 valid sets and 1 pair
