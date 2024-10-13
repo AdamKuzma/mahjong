@@ -77,97 +77,14 @@ struct TileSectionView: View {
             TileAccordionView(title: "Characters", tiles: $viewModel.characterTiles, onTileTap: { index in viewModel.toggleTileState(index: index, for: .characters) })
             TileAccordionView(title: "Winds", tiles: $viewModel.windTiles, onTileTap: { index in viewModel.toggleTileState(index: index, for: .winds) })
             TileAccordionView(title: "Dragons", tiles: $viewModel.dragonTiles, onTileTap: { index in viewModel.toggleTileState(index: index, for: .dragons) })
-            
-            Spacer(minLength: 30)
-            
             TileAccordionView(title: "Flowers", tiles: $viewModel.flowerTiles, onTileTap: { index in viewModel.toggleTileState(index: index, for: .flowers) })
-            AdditionalView()
+            AdditionalView(viewModel: viewModel)
             
             Spacer(minLength: 60)
         }
     }
 }
 
-
-// MARK: - Additional View
-struct AdditionalView: View {
-    
-    enum SeatWind: String, CaseIterable, Identifiable {
-        case north = "North Wind"
-        case east = "East Wind"
-        case south = "South Wind"
-        case west = "West Wind"
-        
-        var id: String { self.rawValue }
-    }
-    
-    enum PrevailingWind: String, CaseIterable, Identifiable {
-        case north = "North Wind"
-        case east = "East Wind"
-        case south = "South Wind"
-        case west = "West Wind"
-        
-        var id: String { self.rawValue }
-    }
-    
-    @State private var selectedSeatWind: SeatWind = .east
-    @State private var selectedPrevailingWind: PrevailingWind = .east
-    @State private var isSelfDrawn: Bool = false
-    @State private var isConcealed: Bool = false
-    
-    var body: some View {
-        AccordionView(title: "Additional") {
-            VStack(spacing: 25) {
-                HStack {
-                    Text("Seat Wind")
-                        .font(.body)
-                        .foregroundStyle(Color(UIColor.systemGray))
-                    
-                    Spacer()
-
-                    Picker("Seat Wind", selection: $selectedSeatWind) {
-                        ForEach(SeatWind.allCases) { wind in
-                            Text(wind.rawValue).tag(wind)
-                        }
-                    }
-                    .pickerStyle(MenuPickerStyle()) // Dropdown style
-                }
-                
-                HStack {
-                    Text("Prevailing Wind")
-                        .font(.body)
-                        .foregroundStyle(Color(UIColor.systemGray))
-                    
-                    Spacer()
-
-                    Picker("Prevailing Wind", selection: $selectedPrevailingWind) {
-                        ForEach(PrevailingWind.allCases) { wind in
-                            Text(wind.rawValue).tag(wind)
-                        }
-                    }
-                    .pickerStyle(MenuPickerStyle()) // Dropdown style
-                }
-                HStack {
-                    Toggle(isOn: $isSelfDrawn) {
-                        Text("Self Draw")
-                            .font(.body)
-                            .foregroundStyle(Color(UIColor.systemGray))
-                    }
-                }
-                HStack {
-                    Toggle(isOn: $isConcealed) {
-                        Text("Concealed Hand")
-                            .font(.body)
-                            .foregroundStyle(Color(UIColor.systemGray))
-                    }
-                }
-            }
-            .padding(.top, 10)
-            .padding(.bottom, 40)
-            .padding(.horizontal, 4)
-        }
-    }
-}
 
 // MARK: - Tile Accordion View
 struct TileAccordionView: View {
@@ -388,6 +305,10 @@ class MahjongViewModel: ObservableObject {
     ]
     
     @Published var selectedSeatWind: AdditionalView.SeatWind = .east
+    @Published var selectedPrevailingWind: AdditionalView.PrevailingWind = .east
+    
+    @Published var isSelfDrawn: Bool = false
+    @Published var isConcealedHand: Bool = false
     
     @Published var selectedTilesCount = 0
     
@@ -441,6 +362,10 @@ class MahjongViewModel: ObservableObject {
             } else if tiles[index].state == .selected {
                 tiles[index].state = .unselected
             }
+        }
+        
+        if category == .winds {
+            print("Wind tile toggled: \(tiles[index].name)")
         }
 
         // Trigger haptic feedback when tile state changes
@@ -526,6 +451,86 @@ class MahjongViewModel: ObservableObject {
         selectedTilesCount = 0 // Reset the selected tile count
     }
 }
+
+
+// MARK: - Additional View
+struct AdditionalView: View {
+    
+    enum SeatWind: String, CaseIterable, Identifiable {
+        case north = "North Wind"
+        case east = "East Wind"
+        case south = "South Wind"
+        case west = "West Wind"
+        
+        var id: String { self.rawValue }
+    }
+    
+    enum PrevailingWind: String, CaseIterable, Identifiable {
+        case north = "North Wind"
+        case east = "East Wind"
+        case south = "South Wind"
+        case west = "West Wind"
+        
+        var id: String { self.rawValue }
+    }
+    
+    @ObservedObject var viewModel: MahjongViewModel
+    
+    var body: some View {
+        AccordionView(title: "Additional") {
+            VStack(spacing: 25) {
+                HStack {
+                    Text("Seat Wind")
+                        .font(.body)
+                        .foregroundStyle(Color(UIColor.systemGray))
+                    
+                    Spacer()
+
+                    Picker("Seat Wind", selection: $viewModel.selectedSeatWind) {
+                        ForEach(SeatWind.allCases) { wind in
+                            Text(wind.rawValue).tag(wind)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle()) // Dropdown style
+                }
+                
+                HStack {
+                    Text("Prevailing Wind")
+                        .font(.body)
+                        .foregroundStyle(Color(UIColor.systemGray))
+                    
+                    Spacer()
+
+                    Picker("Prevailing Wind", selection: $viewModel.selectedPrevailingWind) {
+                        ForEach(PrevailingWind.allCases) { wind in
+                            Text(wind.rawValue).tag(wind)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle()) // Dropdown style
+                }
+                HStack {
+                    Toggle(isOn: $viewModel.isSelfDrawn) {
+                        Text("Self Draw")
+                            .font(.body)
+                            .foregroundStyle(Color(UIColor.systemGray))
+                    }
+                }
+                HStack {
+                    Toggle(isOn: $viewModel.isConcealedHand) {
+                        Text("Concealed Hand")
+                            .font(.body)
+                            .foregroundStyle(Color(UIColor.systemGray))
+                    }
+                }
+            }
+            .padding(.top, 10)
+            .padding(.bottom, 40)
+            .padding(.horizontal, 4)
+        }
+    }
+}
+
+
 
 // MARK: - Tile Model and Views
 struct Tile: Identifiable {
@@ -638,6 +643,10 @@ struct SheetContentView: View {
     @State private var handMessage: String = ""
     @State private var handPoints: Int = 0
     @State private var flowerPoints: Int = 0
+    @State private var dragonPoints: Int = 0
+    @State private var windPoints: Int = 0
+    @State private var selfDrawnPoints: Int = 0
+    @State private var concealedHandPoints: Int = 0
     let scoreCalculator = ScoreCalculator()
     
     var body: some View {
@@ -683,6 +692,78 @@ struct SheetContentView: View {
                 }
             }
             
+            // Dragon Points
+            if dragonPoints > 0 {
+                Divider()
+                
+                HStack {
+                    Text("Dragon Points")
+                        .font(.body)
+                        .foregroundColor(.orange)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    Text("+\(dragonPoints)")
+                        .font(.body)
+                        .foregroundColor(.orange)
+                }
+            }
+            
+            // Wind Points
+            if windPoints > 0 {
+                Divider()
+                
+                HStack {
+                    Text("Wind Points")
+                        .font(.body)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    Text("+\(windPoints)")
+                        .font(.body)
+                        .foregroundColor(.blue)
+                }
+            }
+            
+            // Self Drawn Points
+            if selfDrawnPoints > 0 {
+                Divider()
+                
+                HStack {
+                    Text("Self Drawn")
+                        .font(.body)
+                        .foregroundColor(.purple)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    Text("+\(selfDrawnPoints)")
+                        .font(.body)
+                        .foregroundColor(.purple)
+                }
+            }
+            
+            // Concealed Hand Points
+            if concealedHandPoints > 0 {
+                Divider()
+                
+                HStack {
+                    Text("Concealed Hand")
+                        .font(.body)
+                        .foregroundColor(.purple)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                    
+                    Text("+\(concealedHandPoints)")
+                        .font(.body)
+                        .foregroundColor(.purple)
+                }
+            }
+            
             // Total Points
             if handPoints > 0 {
                 Divider()
@@ -694,7 +775,7 @@ struct SheetContentView: View {
                     
                     Spacer()
                     
-                    Text("\(handPoints + flowerPoints)")
+                    Text("\(handPoints + windPoints + flowerPoints + dragonPoints + selfDrawnPoints + concealedHandPoints)")
                         .font(.headline)
                 }
             }
@@ -709,12 +790,28 @@ struct SheetContentView: View {
                 let selectedTiles = viewModel.allSelectedTiles()
                 let selectedFlowerTiles = viewModel.flowerTiles.filter { $0.state == .selected }
                 
+                print("Selected tiles: \(selectedTiles.map { $0.name })")
+                print("Selected seat wind: \(viewModel.selectedSeatWind.rawValue)")
+                print("Selected prevailing wind: \(viewModel.selectedPrevailingWind.rawValue)")
+                
                 // Unpack the tuple into three variables
-                let (message, handPts, flowerPts) = scoreCalculator.validateHand(tiles: selectedTiles, selectedSeatWind: viewModel.selectedSeatWind, selectedFlowerTiles: selectedFlowerTiles)
+                let (message, handPts, flowerPts, dragonPts, windPts, selfDrawnPts, concealedHandPts) = scoreCalculator.validateHand(
+                    tiles: selectedTiles,
+                    selectedSeatWind: viewModel.selectedSeatWind,  // Ensure this is of type SeatWind
+                    selectedPrevailingWind: viewModel.selectedPrevailingWind, // Ensure this is of type PrevailingWind
+                    selectedFlowerTiles: selectedFlowerTiles,
+                    isSelfDrawn: viewModel.isSelfDrawn,
+                    isConcealedHand: viewModel.isConcealedHand
+                )
                                 
-                handMessage = message  // Update the hand message
-                handPoints = handPts    // Update the hand points
-                flowerPoints = flowerPts  // Update the flower points
+                handMessage = message
+                handPoints = handPts
+                flowerPoints = flowerPts
+                dragonPoints = dragonPts
+                windPoints = windPts
+                selfDrawnPoints = selfDrawnPts
+                concealedHandPoints = concealedHandPts
+                
             }) {
                 Text("Calculate Score")
                     .font(.headline)

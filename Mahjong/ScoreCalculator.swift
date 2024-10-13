@@ -11,89 +11,174 @@ class ScoreCalculator {
     
     // MARK: - Score Messages
     
-    // Validates if the hand has a valid structure and determines its type
-    
-    func validateHand(tiles: [Tile], selectedSeatWind: AdditionalView.SeatWind, selectedFlowerTiles: [Tile]) -> (String, Int, Int) {
+    func validateHand(tiles: [Tile], selectedSeatWind: AdditionalView.SeatWind, selectedPrevailingWind: AdditionalView.PrevailingWind, selectedFlowerTiles: [Tile], isSelfDrawn: Bool, isConcealedHand: Bool) -> (String, Int, Int, Int, Int, Int, Int) {
         
         // Variable to hold the total score
-        var totalPoints = 0
+        var handPoints = 0
         var handMessage = ""
+        var windPoints = 0
+        var dragonPoints = 0
+        var flowerPoints = 0
+        var selfDrawnPoints = 0
+        var concealedHandPoints = 0
         
         
         // Step 1: Check if there are 14 tiles
         guard tiles.count == 14 else {
-            print("Invalid hand size. Current tile count: \(tiles.count)")
-            return ("Please select 14 tiles", 0, 0) // Returning a tuple
+            return ("Please select 14 tiles", 0, 0, 0, 0, 0, 0)
         }
-        
-        print("Validating hand with tiles: \(tiles)")
-        
         
         // Check for hand type points
         if isThirteenOrphans(tiles) {
-            handMessage = "Thirteen Orphans Hand (十三么)"
-            totalPoints += 13
-        } else if isValidSevenPairs(tiles) {
-            handMessage = "Seven Pair Hand (七對子)"
-            totalPoints += 4
+            handMessage = "Thirteen Orphans Hand 十三么"
+            handPoints += 13
         } else if isPureHand(tiles) {
-            handMessage = "Pure Hand (清一色)"
-            totalPoints += 7
+            handMessage = "Pure Hand 清一色"
+            handPoints += 7
+        } else if isValidSevenPairs(tiles) {
+            handMessage = "Seven Pair Hand 七對子"
+            handPoints += 4
         } else if isMixedOneSuit(tiles) {
-            handMessage = "Mixed One Suit Hand (混一色)"
-            totalPoints += 3
+            handMessage = "Mixed One Suit Hand 混一色"
+            handPoints += 3
         } else if isAllTriplets(tiles) {
             handMessage = "All Triplets Hand"
-            totalPoints += 3
+            handPoints += 3
         } else if isAllChows(tiles) {
             handMessage = "All Chow Hand"
-            totalPoints += 1
+            handPoints += 1
         } else {
             handMessage = "Oh no! You don't have a winning combination"
+            handPoints = 0
+            return (handMessage, 0, 0, 0, 0, 0, 0)
+        }
+        
+        
+        if handPoints > 0 {  // Only apply self drawn bonus if there's a valid hand
+            if isSelfDrawn {
+                selfDrawnPoints = 1
+            }
+            if isConcealedHand {
+                concealedHandPoints = 1
+            }
+            
+            // Only calculate additional points if there's a winning hand
+            windPoints = calculateWindPoints(tiles: tiles, seatWind: selectedSeatWind, prevailingWind: selectedPrevailingWind)
+            flowerPoints = calculateFlowerPoints(selectedFlowerTiles: selectedFlowerTiles)
+            //flowerPoints = calculateFlowerPoints(selectedFlowerTiles: selectedFlowerTiles, selectedSeatWind: selectedSeatWind)
+            dragonPoints = calculateDragonPoints(tiles: tiles)
+            
+        } else {
+            // If no valid hand, set all points to 0
+            return (handMessage, 0, 0, 0, 0, 0, 0)
         }
 
-        // Calculate additional points from flower tiles
-        let flowerPoints = calculateFlowerPoints(selectedFlowerTiles: selectedFlowerTiles, selectedSeatWind: selectedSeatWind)
+        print("Hand points: \(handPoints), Wind points: \(windPoints), Dragon points: \(dragonPoints), Flower points: \(flowerPoints), Self Drawn points: \(selfDrawnPoints), Concealed Hand points: \(concealedHandPoints)")
 
-        // Return the hand message, hand points, and flower points separately
-        return (handMessage, totalPoints, flowerPoints)
+        // Return the hand message, hand points, flower points, and wind points
+        return (handMessage, handPoints, flowerPoints, dragonPoints, windPoints, selfDrawnPoints, concealedHandPoints)
+    }
+    
+    
+    //MARK: - Dragon Points
+    private func calculateDragonPoints(tiles: [Tile]) -> Int {
+        let dragonTiles = tiles.filter { $0.suit == "dragon" }
+        var dragonPoints = 0
+
+        // Check for Red Dragon pung or kong
+        if dragonTiles.filter({ $0.name == "red_dragon" }).count >= 3 {
+            dragonPoints += 1
+        }
+
+        // Check for Green Dragon pung or kong
+        if dragonTiles.filter({ $0.name == "green_dragon" }).count >= 3 {
+            dragonPoints += 1
+        }
+
+        // Check for White Dragon pung or kong
+        if dragonTiles.filter({ $0.name == "white_dragon" }).count >= 3 {
+            dragonPoints += 1
+        }
+
+        return dragonPoints
+    }
+    
+    
+    //MARK: - Wind Points
+    
+    func calculateWindPoints(tiles: [Tile], seatWind: AdditionalView.SeatWind, prevailingWind: AdditionalView.PrevailingWind) -> Int {
+        print("Calculating wind points...")
+        print("Seat Wind: \(seatWind.rawValue), Prevailing Wind: \(prevailingWind.rawValue)")
+        
+        var windPoints = 0
+        
+        // Check for wind tiles in the selected tiles
+        let windTiles = tiles.filter { $0.suit == "wind" }
+        print("Wind tiles: \(windTiles.map { $0.name })")
+        
+        // Check for seat wind pung
+        let seatWindName = seatWind.rawValue.replacingOccurrences(of: " Wind", with: "").lowercased() + "_wind"
+        let seatWindTiles = windTiles.filter { $0.name == seatWindName }
+        print("Seat wind name to match: \(seatWindName)")
+        print("Seat wind tiles: \(seatWindTiles.map { $0.name })")
+        if seatWindTiles.count >= 3 {
+            windPoints += 1
+            print("Seat wind pung found")
+        }
+        
+        // Check for prevailing wind pung
+        let prevailingWindName = prevailingWind.rawValue.replacingOccurrences(of: " Wind", with: "").lowercased() + "_wind"
+        let prevailingWindTiles = windTiles.filter { $0.name == prevailingWindName }
+        print("Prevailing wind name to match: \(prevailingWindName)")
+        print("Prevailing wind tiles: \(prevailingWindTiles.map { $0.name })")
+        if prevailingWindTiles.count >= 3 {
+            windPoints += 1
+            print("Prevailing wind pung found")
+        }
+        
+        print("Total wind points: \(windPoints)")
+        return windPoints
     }
     
     
     //MARK: - Flower Counter
     
-    // Function to calculate points from flower tiles
-    func calculateFlowerPoints(selectedFlowerTiles: [Tile], selectedSeatWind: AdditionalView.SeatWind) -> Int {
-        var flowerPoints = 0
-        
-        // Check if selected flowers correspond to the seat wind
-        let seatWindFlowerTiles = getFlowerTilesForSeatWind(selectedSeatWind)
-        
-        for tile in selectedFlowerTiles {
-            if seatWindFlowerTiles.contains(tile.name) {
-                flowerPoints += 1
-            }
-        }
-        
-        return flowerPoints
+    func calculateFlowerPoints(selectedFlowerTiles: [Tile]) -> Int {
+        return selectedFlowerTiles.count
     }
     
-    // Return the corresponding flower tiles for a given seat wind
-    private func getFlowerTilesForSeatWind(_ seatWind: AdditionalView.SeatWind) -> [String] {
-        switch seatWind {
-        case .east:
-            return ["plum_flower", "spring_season"]
-        case .south:
-            return ["orchid_flower", "summer_season"]
-        case .west:
-            return ["chrysanthemum_flower", "autumn_season"]
-        case .north:
-            return ["bamboo_flower", "winter_season"]
-        }
-    }
+//    func calculateFlowerPoints(selectedFlowerTiles: [Tile], selectedSeatWind: AdditionalView.SeatWind) -> Int {
+//        var flowerPoints = 0
+//        
+//        // Check if selected flowers correspond to the seat wind
+//        let seatWindFlowerTiles = getFlowerTilesForSeatWind(selectedSeatWind)
+//        
+//        for tile in selectedFlowerTiles {
+//            if seatWindFlowerTiles.contains(tile.name) {
+//                flowerPoints += 1
+//            }
+//        }
+//        
+//        return flowerPoints
+//
+//    }
+//    
+//    // Return the corresponding flower tiles for a given seat wind
+//    private func getFlowerTilesForSeatWind(_ seatWind: AdditionalView.SeatWind) -> [String] {
+//        switch seatWind {
+//        case .east:
+//            return ["plum_flower", "spring_season"]
+//        case .south:
+//            return ["orchid_flower", "summer_season"]
+//        case .west:
+//            return ["chrysanthemum_flower", "autumn_season"]
+//        case .north:
+//            return ["bamboo_flower", "winter_season"]
+//        }
+//    }
     
     
-    // MARK: - All Triplets (All Pungs)
+    // MARK: - All Pungs
         
     // Check if the hand consists of four pungs and a pair
     private func isAllTriplets(_ tiles: [Tile]) -> Bool {
@@ -112,7 +197,6 @@ class ScoreCalculator {
 
         // After extracting 4 pungs, check if the remaining tiles form a pair
         let result = isPair(remainingTiles)
-        print("Final remaining tiles: \(remainingTiles), Is pair: \(result)")
         return result
     }
     
@@ -137,10 +221,6 @@ class ScoreCalculator {
 
         // Ensure all the required unique tiles appear at least once
         let hasAllUniqueTiles = requiredTiles.allSatisfy { tileCounts[$0] ?? 0 >= 1 }
-
-        print("Tile counts: \(tileCounts)")
-        print("Has all unique tiles: \(hasAllUniqueTiles)")
-        print("Pair count is valid: \(hasOnePair)")
 
         // Return true if the hand has the correct unique tiles plus a pair and the total count is 14
         return hasAllUniqueTiles && hasOnePair && tiles.count == 14
@@ -192,20 +272,43 @@ class ScoreCalculator {
     
     // Check if the hand is Mixed One Suit (single suit plus honors)
     private func isMixedOneSuit(_ tiles: [Tile]) -> Bool {
-        let suitTiles = tiles.filter { !$0.isHonor }
+        let suitedTiles = tiles.filter { !$0.isHonor }
         let honorTiles = tiles.filter { $0.isHonor }
-
-        // Mixed One Suit should have only one type of suited tile and must include honor tiles
-        let suitCount = Set(suitTiles.map { $0.suit }).count
-        let hasHonors = !honorTiles.isEmpty
         
-        // Ensure all honor tiles are of the same specific type (either only red dragons, green dragons, white dragons, or a specific wind)
+        // Ensure we have both suited tiles and honor tiles
+        guard !suitedTiles.isEmpty && !honorTiles.isEmpty else { return false }
+        
+        // Check if all suited tiles are of the same suit
+        let suits = Set(suitedTiles.map { $0.suit })
+        guard suits.count == 1 else { return false }
+        
+        // Check for valid sets (pungs and chows) within the suited tiles
+        var remainingSuitedTiles = suitedTiles
+        var validSetsFound = 0
+        
+        while !remainingSuitedTiles.isEmpty {
+            if let pung = findPung(in: remainingSuitedTiles) {
+                validSetsFound += 1
+                remainingSuitedTiles = removeTiles(pung, from: remainingSuitedTiles)
+            } else if let chow = findChow(in: remainingSuitedTiles) {
+                validSetsFound += 1
+                remainingSuitedTiles = removeTiles(chow, from: remainingSuitedTiles)
+            } else {
+                // If we can't find a valid set, break the loop
+                break
+            }
+        }
+        
+        // Check if we found at least one valid set and the remaining tiles form a pair
+        let hasValidSets = validSetsFound > 0
+        let remainingTilesFormPair = remainingSuitedTiles.count == 2 && remainingSuitedTiles[0].name == remainingSuitedTiles[1].name
+        
+        // Ensure honor tiles are of the same type (either all dragons or all of one wind)
         let dragonTypes = Set(honorTiles.filter { $0.suit == "dragon" }.map { $0.name })
         let windTypes = Set(honorTiles.filter { $0.suit == "wind" }.map { $0.name })
-        let hasSingleHonorType = (dragonTypes.count <= 1) && (windTypes.count <= 1)
-
-        // Ensure it doesn't match Thirteen Orphans or other special cases
-        return suitCount == 1 && hasHonors && hasSingleHonorType && !isThirteenOrphans(tiles) && !isValidSevenPairs(tiles)
+        let hasSingleHonorType = (dragonTypes.count <= 1) && (windTypes.count <= 1) && (dragonTypes.count + windTypes.count == 1)
+        
+        return hasValidSets && remainingTilesFormPair && hasSingleHonorType
     }
     
     
@@ -216,8 +319,6 @@ class ScoreCalculator {
         let tileCounts = Dictionary(grouping: tiles) { $0.name }.mapValues { $0.count }
         return tileCounts.values.filter { $0 == 2 }.count == 7
     }
-    
-    
     
     
     // Check if the hand has 4 valid sets and 1 pair
@@ -314,7 +415,6 @@ class ScoreCalculator {
     // Checks if the remaining tiles form a pair
     private func isPair(_ tiles: [Tile]) -> Bool {
         let result = tiles.count == 2 && tiles[0].name == tiles[1].name
-        print("Checking for pair in tiles: \(tiles), Result: \(result)")
         return result
     }
     
