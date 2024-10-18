@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "2C3E91E4-CEAC-4062-B864-BBB733384725",
+      "name" : "Test Scheme Action",
+      "options" : {
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:Mahjong.xcodeproj",
+          "identifier" : "66EAC5502CAE05630044D353",
+          "name" : "Mahjong"
+        }
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Mahjong.xcodeproj",
+      "identifier" : "66EAC5502CAE05630044D353",
+      "name" : "Mahjong"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Mahjong.xcodeproj",
+        "identifier" : "66EAC5602CAE05650044D353",
+        "name" : "MahjongTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Mahjong.xcodeproj",
+        "identifier" : "66EAC56A2CAE05650044D353",
+        "name" : "MahjongUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
