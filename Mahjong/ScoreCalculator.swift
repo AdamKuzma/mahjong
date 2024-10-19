@@ -84,6 +84,9 @@ class ScoreCalculator {
         } else if isAllChows(tiles) {
             handMessage = "All Chow Hand 平糊"
             handPoints += 1
+        } else if isChickenHand(tiles) {
+            handMessage = "Chicken Hand 雞糊"
+            handPoints = 0
         } else {
             handMessage = "Oh no! You don't have a winning combination"
             handPoints = 0
@@ -672,28 +675,80 @@ class ScoreCalculator {
         var remainingTiles = tiles
         var chowsFound = 0
 
-        print("Starting isAllChows check with \(remainingTiles.count) tiles")
-
         // Try to extract chows
         while chowsFound < 4 && remainingTiles.count >= 3 {
             if let chow = findChow(in: remainingTiles) {
                 chowsFound += 1
                 remainingTiles = removeTiles(chow, from: remainingTiles)
-                print("Found chow: \(chow.map { $0.name }). Chows found: \(chowsFound). Remaining tiles: \(remainingTiles.count)")
             } else {
-                print("No more chows found. Chows found: \(chowsFound). Remaining tiles: \(remainingTiles.count)")
                 break
             }
         }
 
         let isPairRemaining = isPair(remainingTiles)
-        print("Chows found: \(chowsFound). Is pair remaining: \(isPairRemaining)")
 
         return chowsFound == 4 && isPairRemaining
     }
     
     
+    // MARK: - Chicken Hand
+    private func isChickenHand(_ tiles: [Tile]) -> Bool {
+        print("Starting Chicken Hand check with tiles: \(tiles.map { $0.name })")
+        
+        let (sets, remainingTiles) = findBestCombination(tiles)
+        
+        let pungsCount = sets.filter { $0.count == 3 && $0[0].name == $0[1].name && $0[1].name == $0[2].name }.count
+        let chowsCount = sets.count - pungsCount
+        let isPairRemaining = isPair(remainingTiles)
+        
+        print("Chicken Hand check: Sets found: \(sets.count) (Pungs: \(pungsCount), Chows: \(chowsCount))")
+        print("Remaining tiles: \(remainingTiles.map { $0.name })")
+        print("Is pair remaining: \(isPairRemaining)")
+        
+        return sets.count == 4 && isPairRemaining
+    }
+    
+    
+    
     //MARK: - Basic Logic
+    
+    private func findBestCombination(_ tiles: [Tile]) -> ([[Tile]], [Tile]) {
+        let sortedTiles = tiles.sorted { ($0.suit, $0.number ?? 0) < ($1.suit, $1.number ?? 0) }
+        var bestCombination: ([[Tile]], [Tile]) = ([], sortedTiles)
+        var bestScore = 0
+        
+        func backtrack(_ currentTiles: [Tile], _ currentSets: [[Tile]], _ remainingTiles: [Tile], _ depth: Int) {
+            // Base case: if we've found 4 sets or exhausted all tiles
+            if currentSets.count == 4 || remainingTiles.isEmpty {
+                let score = currentSets.count * 3 + (isPair(remainingTiles) ? 2 : 0)
+                if score > bestScore {
+                    bestScore = score
+                    bestCombination = (currentSets, remainingTiles)
+                }
+                return
+            }
+            
+            // Try to form a pung
+            if let pung = findPung(in: remainingTiles) {
+                var newRemaining = removeTiles(pung, from: remainingTiles)
+                backtrack(currentTiles, currentSets + [pung], newRemaining, depth + 1)
+            }
+            
+            // Try to form a chow
+            if let chow = findChow(in: remainingTiles) {
+                var newRemaining = removeTiles(chow, from: remainingTiles)
+                backtrack(currentTiles, currentSets + [chow], newRemaining, depth + 1)
+            }
+            
+            // If we can't form a set, move on to the next tile
+            if !remainingTiles.isEmpty {
+                backtrack(currentTiles + [remainingTiles[0]], currentSets, Array(remainingTiles.dropFirst()), depth + 1)
+            }
+        }
+        
+        backtrack([], [], sortedTiles, 0)
+        return bestCombination
+    }
     
     // Tries to extract a valid set (chow, pung, kong) from the tiles
     private func extractValidSet(from tiles: [Tile]) -> (set: [Tile], remainingTiles: [Tile])? {
@@ -777,11 +832,10 @@ class ScoreCalculator {
     }
     
     
-    // Checks if the remaining tiles form a pair
+    // Finds a pair
     private func isPair(_ tiles: [Tile]) -> Bool {
-        let isPair = tiles.count == 2 && tiles[0].name == tiles[1].name
-        print("Checking for pair: \(tiles.map { $0.name }). Is pair: \(isPair)")
-        return isPair
+        guard tiles.count == 2 else { return false }
+        return tiles[0].name == tiles[1].name
     }
     
     
