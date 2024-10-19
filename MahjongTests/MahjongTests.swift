@@ -223,6 +223,69 @@ class ScoreCalculatorTests: XCTestCase {
     }
     
     
+    // MARK: - All Honor Hand 字一色 - 10 points
+    func testValidAllHonorTilesHand() {
+        let tiles = [
+            Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "red_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true)
+        ]
+        
+        let result = scoreCalculator.validateHand(
+            tiles: tiles,
+            selectedSeatWind: .east,
+            selectedPrevailingWind: .east,
+            selectedFlowerTiles: [],
+            isSelfDrawn: false,
+            isConcealedHand: true
+        )
+        
+        XCTAssertEqual(result.0, "All Honor Tiles Hand 字一色", "The hand should be recognized as All Honor Tiles.")
+        XCTAssertEqual(result.1, 10, "The hand should score 10 points for All Honor Tiles.")
+    }
+    
+    func testInvalidAllHonorTilesHand() {
+        let tiles = [
+            Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "east_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "south_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "west_wind", suit: "wind", number: nil, isHonor: true),
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false), // Non-honor tile
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false), // Non-honor tile
+            Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false), // Non-honor tile
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true),
+            Tile(name: "green_dragon", suit: "dragon", number: nil, isHonor: true)
+        ]
+        
+        let result = scoreCalculator.validateHand(
+            tiles: tiles,
+            selectedSeatWind: .east,
+            selectedPrevailingWind: .east,
+            selectedFlowerTiles: [],
+            isSelfDrawn: false,
+            isConcealedHand: true
+        )
+        
+        XCTAssertNotEqual(result.0, "All Honor Tiles Hand 字一色", "The hand should not be recognized as All Honor Tiles.")
+        XCTAssertNotEqual(result.1, 10, "The hand should not score 10 points for All Honor Tiles.")
+    }
+    
     // MARK: - Great Dragons Hand 大三元 - 8 points
     func testGreatDragonsHand() {
         let tiles = [

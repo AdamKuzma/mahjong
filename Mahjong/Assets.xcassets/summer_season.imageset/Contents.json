@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Flower_1x.png",
+      "filename" : "SummerSeason_1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Flower_2x.png",
+      "filename" : "SummerSeason_2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Flower_3x.png",
+      "filename" : "SummerSeason_3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

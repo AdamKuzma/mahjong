@@ -57,6 +57,9 @@ class ScoreCalculator {
             handMessage = "Nine Gates Hand 九蓮寶燈"
             handPoints += 10
             applyConcealedBonus = false  // Nine Gates is always concealed
+        } else if isAllHonorHand(tiles) {
+            handMessage = "All Honor Tiles Hand 字一色"
+            handPoints += 10
         } else if isGreatDragons(tiles) {
             handMessage = "Great Dragons Hand 大三元"
             handPoints += 8
@@ -260,6 +263,38 @@ class ScoreCalculator {
         
         // There should be exactly one extra tile
         return extraCount == 1
+    }
+    
+    
+    // MARK: - All Honor Hand
+    private func isAllHonorHand(_ tiles: [Tile]) -> Bool {
+        // Filter honor tiles (Winds and Dragons only)
+        let honorTiles = tiles.filter { $0.suit == "wind" || $0.suit == "dragon" }
+        
+        // Ensure all 14 tiles are honor tiles
+        guard honorTiles.count == 14 else {
+            return false
+        }
+        
+        // Group the honor tiles by their name
+        let groupedTiles = Dictionary(grouping: honorTiles, by: { $0.name })
+        
+        var pungsCount = 0
+        var pairCount = 0
+        
+        for (_, group) in groupedTiles {
+            if group.count == 3 {
+                pungsCount += 1
+            } else if group.count == 4 {
+                pungsCount += 1
+            } else if group.count == 2 {
+                pairCount += 1
+            } else {
+                return false  // Invalid tile count for Pungs, Kongs, or Pairs
+            }
+        }
+        
+        return pungsCount == 4 && pairCount == 1
     }
     
     

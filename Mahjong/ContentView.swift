@@ -296,8 +296,8 @@ class MahjongViewModel: ObservableObject {
     @Published var flowerTiles: [Tile] = [
         Tile(name: "plum_flower", suit: "flower", number: nil, isHonor: false),
         Tile(name: "orchid_flower", suit: "flower", number: nil, isHonor: false),
-        Tile(name: "bamboo_flower", suit: "flower", number: nil, isHonor: false),
         Tile(name: "chrysanthemum_flower", suit: "flower", number: nil, isHonor: false),
+        Tile(name: "bamboo_flower", suit: "flower", number: nil, isHonor: false),
         Tile(name: "spring_season", suit: "flower", number: nil, isHonor: false),
         Tile(name: "summer_season", suit: "flower", number: nil, isHonor: false),
         Tile(name: "autumn_season", suit: "flower", number: nil, isHonor: false),
