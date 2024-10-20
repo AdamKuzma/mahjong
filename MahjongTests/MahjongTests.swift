@@ -684,8 +684,8 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false),
             Tile(name: "dot_6", suit: "dots", number: 6, isHonor: false),
             Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false),
-            Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false),
-            Tile(name: "dot_9", suit: "dots", number: 9, isHonor: false)
+            Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false),
+            Tile(name: "dot_8", suit: "dots", number: 8, isHonor: false)
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
@@ -710,7 +710,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "All Chow Hand 平糊", "All Chows hand did not validate correctly.")
+        XCTAssertEqual(result.0, "All Chow Hand 平糊", "All Chows with Ones Pair hand did not validate correctly.")
     }
     func testAllChowsHandSameChows() {
         let tiles = [
