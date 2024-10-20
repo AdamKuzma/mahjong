@@ -740,7 +740,14 @@ class ScoreCalculator {
                 backtrack(currentTiles, currentSets + [chow], newRemaining, depth + 1)
             }
             
-            // If we can't form a set, move on to the next tile
+            // If we can't form a set, try to form a pair if we don't have 4 sets yet
+            if currentSets.count < 4 && isPair(Array(remainingTiles.prefix(2))) {
+                let pair = Array(remainingTiles.prefix(2))
+                var newRemaining = removeTiles(pair, from: remainingTiles)
+                backtrack(currentTiles, currentSets, pair + newRemaining, depth + 1)
+            }
+            
+            // If we can't form a set or pair, move on to the next tile
             if !remainingTiles.isEmpty {
                 backtrack(currentTiles + [remainingTiles[0]], currentSets, Array(remainingTiles.dropFirst()), depth + 1)
             }
@@ -769,26 +776,20 @@ class ScoreCalculator {
         let groupedBySuit = Dictionary(grouping: tiles.filter { !$0.isHonor }) { $0.suit }
 
         for (_, suitTiles) in groupedBySuit {
-            var tileCounts = [Int: Int]()
-            for tile in suitTiles {
-                if let number = tile.number {
-                    tileCounts[number, default: 0] += 1
-                }
-            }
-
-            for number in 1...7 {
-                if tileCounts[number, default: 0] > 0 &&
-                   tileCounts[number + 1, default: 0] > 0 &&
-                   tileCounts[number + 2, default: 0] > 0 {
-                    // Find the actual tiles for this chow
-                    var chowTiles: [Tile] = []
-                    for i in number...(number + 2) {
-                        if let tile = suitTiles.first(where: { $0.number == i }) {
-                            chowTiles.append(tile)
-                        }
+            let sortedTiles = suitTiles.compactMap { $0.number }.sorted()
+            
+            guard sortedTiles.count >= 3 else { continue }
+            
+            for i in 0...(sortedTiles.count - 3) {
+                if sortedTiles[i] + 1 == sortedTiles[i + 1] && sortedTiles[i] + 2 == sortedTiles[i + 2] {
+                    let chowNumbers = Set(sortedTiles[i...(i+2)])
+                    let chowTiles = suitTiles.filter { tile in
+                        guard let number = tile.number else { return false }
+                        return chowNumbers.contains(number)
                     }
+                    
                     if chowTiles.count == 3 {
-                        return chowTiles
+                        return Array(chowTiles)
                     }
                 }
             }
