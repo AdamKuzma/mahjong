@@ -669,7 +669,7 @@ struct SheetContentView: View {
                 
                 Spacer()
                 
-                if handPoints > 0 {
+                if handPoints > 0 || handMessage == "Chicken Hand 雞糊" {
                     Text("\(handPoints)")
                 }
             }
@@ -765,7 +765,7 @@ struct SheetContentView: View {
             }
             
             // Total Points
-            if handPoints > 0 {
+            if handPoints > 0 || handMessage == "Chicken Hand 雞糊" {
                 Divider()
                 
                 HStack {
