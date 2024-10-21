@@ -790,10 +790,6 @@ struct SheetContentView: View {
                 let selectedTiles = viewModel.allSelectedTiles()
                 let selectedFlowerTiles = viewModel.flowerTiles.filter { $0.state == .selected }
                 
-                print("Selected tiles: \(selectedTiles.map { $0.name })")
-                print("Selected seat wind: \(viewModel.selectedSeatWind.rawValue)")
-                print("Selected prevailing wind: \(viewModel.selectedPrevailingWind.rawValue)")
-                
                 // Unpack the tuple into three variables
                 let (message, handPts, flowerPts, dragonPts, windPts, selfDrawnPts, concealedHandPts) = scoreCalculator.validateHand(
                     tiles: selectedTiles,

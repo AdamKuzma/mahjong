@@ -726,8 +726,8 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),
             Tile(name: "dot_2", suit: "dots", number: 2, isHonor: false),
             Tile(name: "dot_3", suit: "dots", number: 3, isHonor: false),
-            Tile(name: "character_1", suit: "characters", number: 1, isHonor: false),
-            Tile(name: "character_1", suit: "characters", number: 1, isHonor: false) // Pair
+            Tile(name: "character_5", suit: "characters", number: 5, isHonor: false),
+            Tile(name: "character_5", suit: "characters", number: 5, isHonor: false) // Pair
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: true)
