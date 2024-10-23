@@ -35,8 +35,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ContentView.swift,
-				HapticFeedback.swift,
 				ScoreCalculator.swift,
+				Utilities.swift,
 			);
 			target = 66EAC5602CAE05650044D353 /* MahjongTests */;
 		};

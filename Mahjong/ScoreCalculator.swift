@@ -85,7 +85,7 @@ class ScoreCalculator {
             print("\n Hand recognized as Chicken Hand")
         } else {
             handMessage = "Oh no! You don't have a winning combination"
-            handPoints = -1
+            handPoints = 0
             print("\n Hand not recognized as any valid combination")
             return (handMessage, 0, 0, 0, 0, 0, 0)
         }
