@@ -122,8 +122,10 @@ struct AdditionalView: View {
 struct StickyBarView: View {
     let selectedCount: Int
     let onTap: () -> Void
+    let calculateScore: () -> Void
     
     @State private var showDynamicText = false
+    @State private var isLoading = false  // Add this state
     
     private var isHidden: Bool {
         selectedCount == 0
@@ -133,14 +135,34 @@ struct StickyBarView: View {
         selectedCount == 14
     }
     
+    
     var body: some View {
         VStack(spacing: 0) {
-            Button(action: onTap) {
+            Button(action: {
+                if isHandComplete {
+                    isLoading = true  // Start loading
+                    calculateScore()
+                    
+                    // Simulate a brief delay before showing the sheet
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        isLoading = false  // Stop loading
+                        onTap()  // Show the sheet
+                    }
+                } else {
+                    onTap()
+                }
+            }) {
                 HStack(spacing: 8) {
                     if isHandComplete {
-                        Text("Calculate Score")
-                            .font(.headline)
-                            .foregroundColor(.black)
+                        if isLoading {
+                            ProgressView()  // Show spinner
+                                .progressViewStyle(CircularProgressViewStyle(tint: .black))
+                                .scaleEffect(0.8)
+                        } else {
+                            Text("Calculate Score")
+                                .font(.headline)
+                                .foregroundColor(.black)
+                        }
                     } else if !showDynamicText {
                         Text("Selected 1/14")
                             .font(.headline)
@@ -152,18 +174,19 @@ struct StickyBarView: View {
                             .foregroundColor(.white)
                     }
                 }
-                .padding(.vertical, 20)
+                .padding()
                 .frame(maxWidth: .infinity) // This makes the HStack span full width
                 .background(isHandComplete ? Color.white : Color(UIColor.systemGray6))
                 .animation(.spring(response: 0.3), value: isHandComplete) // Animate background change
                 .cornerRadius(14)
             }
+            .disabled(isLoading || (!isHandComplete && selectedCount > 0))
         }
         .padding(.vertical, 20)
         .padding(.horizontal, 24)
         .background(.black)
         .offset(y: isHidden ? 160 : 0) // Move view 100 points down when hidden
-        .animation(.spring(response: 0.3), value: isHidden) // Animate changes
+        .animation(.easeInOut(duration: 0.3), value: isHidden) // Animate changes
         .onChange(of: selectedCount) { _, count in
             if count > 1 {
                 // Delay the swap to dynamic text

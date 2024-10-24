@@ -11,6 +11,17 @@ import UIKit
 
 // MARK: - ViewModel
 class MahjongViewModel: ObservableObject {
+    
+    @Published var handMessage: String = ""
+    @Published var handPoints: Int = 0
+    @Published var flowerPoints: Int = 0
+    @Published var dragonPoints: Int = 0
+    @Published var windPoints: Int = 0
+    @Published var selfDrawnPoints: Int = 0
+    @Published var concealedHandPoints: Int = 0
+    
+    private let scoreCalculator = ScoreCalculator()
+    
     enum TileCategory {
         case dots, bamboo, characters, winds, dragons, flowers
     }
@@ -19,6 +30,34 @@ class MahjongViewModel: ObservableObject {
     func handleDragSelection(index: Int, for category: TileCategory) {
         toggleTileState(index: index, for: category)
     }
+    
+    func calculateScore() {
+        // Trigger haptic feedback when the button is pressed
+        HapticFeedbackManager.triggerLightFeedback()
+        
+        // Validate the selected tiles and update the message
+        let selectedTiles = allSelectedTiles()  // Use self.allSelectedTiles() if you prefer to be explicit
+        let selectedFlowerTiles = flowerTiles.filter { $0.state == .selected }
+        
+        // Unpack the tuple into three variables
+        let (message, handPts, flowerPts, dragonPts, windPts, selfDrawnPts, concealedHandPts) = scoreCalculator.validateHand(
+            tiles: selectedTiles,
+            selectedSeatWind: selectedSeatWind,
+            selectedPrevailingWind: selectedPrevailingWind,
+            selectedFlowerTiles: selectedFlowerTiles,
+            isSelfDrawn: isSelfDrawn,
+            isConcealedHand: isConcealedHand
+        )
+                        
+        handMessage = message
+        handPoints = handPts
+        flowerPoints = flowerPts
+        dragonPoints = dragonPts
+        windPoints = windPts
+        selfDrawnPoints = selfDrawnPts
+        concealedHandPoints = concealedHandPts
+    }
+    
     
     @Published var dotTiles: [Tile] = [
         Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false),

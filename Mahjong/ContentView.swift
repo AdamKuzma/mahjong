@@ -14,7 +14,7 @@ import UIKit
 struct ContentView: View {
     @StateObject private var viewModel = MahjongViewModel()
     @State private var isSheetPresented = false
-    @State private var isViewLoaded = false
+    @State private var selectedCount = 0
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -29,12 +29,16 @@ struct ContentView: View {
                 await performRefresh()
             }
             
-            StickyBarView(selectedCount: viewModel.selectedTilesCount) {
-                isSheetPresented = true
-            }
+            StickyBarView(
+                selectedCount: viewModel.selectedTilesCount,
+                onTap: { isSheetPresented = true },
+                calculateScore: viewModel.calculateScore
+            )
         }
         .sheet(isPresented: $isSheetPresented) {
             HandScoreView(viewModel: viewModel)  // Pass viewModel to HandScoreView
+                .background(Color(red: 15/255, green: 15/255, blue: 15/255))
+                .ignoresSafeArea()
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled)
