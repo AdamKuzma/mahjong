@@ -15,6 +15,9 @@ struct ContentView: View {
     @StateObject private var viewModel = MahjongViewModel()
     @State private var isSheetPresented = false
     @State private var selectedCount = 0
+    @State private var currentDetent: PresentationDetent = .medium
+    @State private var showBreakdown: Bool = false
+    
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -24,6 +27,7 @@ struct ContentView: View {
                     TileSectionView(viewModel: viewModel)
                 }
                 .padding()
+                .padding(.bottom, 30)
             }
             .refreshable {
                 await performRefresh()
@@ -35,11 +39,18 @@ struct ContentView: View {
                 calculateScore: viewModel.calculateScore
             )
         }
+        .padding(.top, 50)
+        .background(Color(red: 12/255, green: 13/255, blue: 13/255))
+        .edgesIgnoringSafeArea(.all)
         .sheet(isPresented: $isSheetPresented) {
-            HandScoreView(viewModel: viewModel)  // Pass viewModel to HandScoreView
-                .background(Color(red: 15/255, green: 15/255, blue: 15/255))
+            HandScoreView(
+                viewModel: viewModel,
+                currentDetent: $currentDetent, 
+                showBreakdown: $showBreakdown
+                )
+                .background(Color(red: 26/255, green: 27/255, blue: 29/255))
                 .ignoresSafeArea()
-                .presentationDetents([.medium])
+                .presentationDetents([.medium, .large], selection: $currentDetent)
                 .presentationDragIndicator(.visible)
                 .presentationBackgroundInteraction(.enabled)
         }

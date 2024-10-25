@@ -111,7 +111,7 @@ struct AdditionalView: View {
                 }
             }
             .padding(.top, 10)
-            .padding(.bottom, 40)
+            .padding(.bottom, 90)
             .padding(.horizontal, 4)
         }
     }
@@ -182,9 +182,10 @@ struct StickyBarView: View {
             }
             .disabled(isLoading || (!isHandComplete && selectedCount > 0))
         }
-        .padding(.vertical, 20)
+        .padding(.top, 20)
+        .padding(.bottom, 45)
         .padding(.horizontal, 24)
-        .background(.black)
+        .background(Color(red: 12/255, green: 13/255, blue: 13/255))
         .offset(y: isHidden ? 160 : 0) // Move view 100 points down when hidden
         .animation(.easeInOut(duration: 0.3), value: isHidden) // Animate changes
         .onChange(of: selectedCount) { _, count in

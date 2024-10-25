@@ -16,7 +16,8 @@ class MahjongViewModel: ObservableObject {
     @Published var handPoints: Int = 0
     @Published var flowerPoints: Int = 0
     @Published var dragonPoints: Int = 0
-    @Published var windPoints: Int = 0
+    @Published var seatWindPoints: Int = 0
+    @Published var prevailingWindPoints: Int = 0
     @Published var selfDrawnPoints: Int = 0
     @Published var concealedHandPoints: Int = 0
     
@@ -40,7 +41,7 @@ class MahjongViewModel: ObservableObject {
         let selectedFlowerTiles = flowerTiles.filter { $0.state == .selected }
         
         // Unpack the tuple into three variables
-        let (message, handPts, flowerPts, dragonPts, windPts, selfDrawnPts, concealedHandPts) = scoreCalculator.validateHand(
+        let (message, handPts, flowerPts, dragonPts, seatWindPts, prevailingWindPts, selfDrawnPts, concealedHandPts) = scoreCalculator.validateHand(
             tiles: selectedTiles,
             selectedSeatWind: selectedSeatWind,
             selectedPrevailingWind: selectedPrevailingWind,
@@ -53,7 +54,8 @@ class MahjongViewModel: ObservableObject {
         handPoints = handPts
         flowerPoints = flowerPts
         dragonPoints = dragonPts
-        windPoints = windPts
+        seatWindPoints = seatWindPts
+        prevailingWindPoints = prevailingWindPts
         selfDrawnPoints = selfDrawnPts
         concealedHandPoints = concealedHandPts
     }

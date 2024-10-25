@@ -17,77 +17,82 @@ class ScoreCalculator {
         selectedFlowerTiles: [Tile],
         isSelfDrawn: Bool,
         isConcealedHand: Bool
-    ) -> (String, Int, Int, Int, Int, Int, Int) {
+    ) -> (String, Int, Int, Int, Int, Int, Int, Int) {
         
         // Variable to hold the total score
         var handPoints = 0
         var handMessage = ""
-        var windPoints = 0
+        var seatWindPoints = 0
+        var prevailingWindPoints = 0
         var dragonPoints = 0
         var flowerPoints = 0
         var selfDrawnPoints = 0
         var concealedHandPoints = 0
+        
+        let windPoints = calculateWindPoints(tiles: tiles, seatWind: selectedSeatWind, prevailingWind: selectedPrevailingWind)
+            seatWindPoints = windPoints.seatWindPoints
+            prevailingWindPoints = windPoints.prevailingWindPoints
         
         // Flag to track if concealed hand bonus should be applied
         var applyConcealedBonus = isConcealedHand
         
         // Step 1: Check if there are 14 tiles
         guard tiles.count == 14 else {
-            return ("Please select 14 tiles", 0, 0, 0, 0, 0, 0)
+            return ("Please select 14 tiles", 0, 0, 0, 0, 0, 0, 0)
         }
         
         // Check for hand type points
         if isThirteenOrphans(tiles) {
-            handMessage = "Thirteen Orphans Hand 十三么"
+            handMessage = "Thirteen Orphans"
             handPoints += 13
             applyConcealedBonus = false  // Thirteen Orphans is always concealed
         } else if isGreatWinds(tiles) {
-            handMessage = "Great Winds Hand 大四喜"
+            handMessage = "Great Winds"
             handPoints += 13
         } else if isOrphansHand(tiles) {
-            handMessage = "Orphans Hand 么九"
+            handMessage = "Orphans Hand"
             handPoints += 10
         } else if isNineGatesHand(tiles, isConcealedHand: isConcealedHand) {
-            handMessage = "Nine Gates Hand 九蓮寶燈"
+            handMessage = "Nine Gates"
             handPoints += 10
             applyConcealedBonus = false  // Nine Gates is always concealed
         } else if isAllHonorHand(tiles) {
-            handMessage = "All Honor Tiles Hand 字一色"
+            handMessage = "All Honors"
             handPoints += 10
         } else if isGreatDragons(tiles) {
-            handMessage = "Great Dragons Hand 大三元"
+            handMessage = "Great Dragons"
             handPoints += 8
         } else if isPureHand(tiles) {
-            handMessage = "Pure Hand 清一色"
+            handMessage = "Pure Hand"
             handPoints += 7
         } else if isSmallWinds(tiles) {
-            handMessage = "Small Winds Hand 小四喜"
+            handMessage = "Small Winds"
             handPoints += 6
         } else if isSmallDragons(tiles) {
-            handMessage = "Small Dragons Hand 小三元"
+            handMessage = "Small Dragons"
             handPoints += 5
         } else if isValidSevenPairs(tiles) {
-            handMessage = "Seven Pair Hand 七對子"
+            handMessage = "Seven Pairs"
             handPoints += 4
         } else if isAllTriplets(tiles) {
-            handMessage = "All Triplets Hand 對對糊"
+            handMessage = "All Triplets"
             handPoints += 3
         } else if isMixedOneSuit(tiles) {
-            handMessage = "Mixed One Suit Hand 混一色"
+            handMessage = "Mixed One Suit"
             handPoints += 3
         } else if isAllChows(tiles) {
-            handMessage = "All Chow Hand 平糊"
+            handMessage = "All Chows"
             handPoints += 1
             print("Hand recognized as All Chows")
         } else if isChickenHand(tiles) {
-            handMessage = "Chicken Hand 雞糊"
-            handPoints = 0
+            handMessage = "Chicken Hand"
+            handPoints += 0
             print("\n Hand recognized as Chicken Hand")
         } else {
             handMessage = "Oh no! You don't have a winning combination"
             handPoints = 0
             print("\n Hand not recognized as any valid combination")
-            return (handMessage, 0, 0, 0, 0, 0, 0)
+            return (handMessage, 0, 0, 0, 0, 0, 0, 0)
         }
         
         
@@ -99,8 +104,6 @@ class ScoreCalculator {
                 concealedHandPoints = 1
             }
             
-            windPoints = calculateWindPoints(tiles: tiles, seatWind: selectedSeatWind, prevailingWind: selectedPrevailingWind)
-            
             flowerPoints = calculateFlowerPoints(selectedFlowerTiles: selectedFlowerTiles)
             //flowerPoints = calculateFlowerPoints(selectedFlowerTiles: selectedFlowerTiles, selectedSeatWind: selectedSeatWind)
             
@@ -111,11 +114,11 @@ class ScoreCalculator {
             
         } else {
             // If no valid hand, set all points to 0
-            return (handMessage, 0, 0, 0, 0, 0, 0)
+            return (handMessage, 0, 0, 0, 0, 0, 0, 0)
         }
         
         print("Final hand message: \(handMessage), points: \(handPoints)")
-        return (handMessage, handPoints, flowerPoints, dragonPoints, windPoints, selfDrawnPoints, concealedHandPoints)
+        return (handMessage, handPoints, flowerPoints, dragonPoints, seatWindPoints, prevailingWindPoints, selfDrawnPoints, concealedHandPoints)
     }
     
     
@@ -144,28 +147,29 @@ class ScoreCalculator {
     
     
     //MARK: - Wind Points
-    func calculateWindPoints(tiles: [Tile], seatWind: AdditionalView.SeatWind, prevailingWind: AdditionalView.PrevailingWind) -> Int {
+    func calculateWindPoints(tiles: [Tile], seatWind: AdditionalView.SeatWind, prevailingWind: AdditionalView.PrevailingWind) -> (seatWindPoints: Int, prevailingWindPoints: Int) {
         
-        var windPoints = 0
+        var seatWindPoints = 0
+        var prevailingWindPoints = 0
         
-        // Check for wind tiles in the selected tiles
+        // Filter the wind tiles in the selected tiles
         let windTiles = tiles.filter { $0.suit == "wind" }
         
         // Check for seat wind pung
         let seatWindName = seatWind.rawValue.replacingOccurrences(of: " Wind", with: "").lowercased() + "_wind"
         let seatWindTiles = windTiles.filter { $0.name == seatWindName }
         if seatWindTiles.count >= 3 {
-            windPoints += 1
+            seatWindPoints = 1
         }
         
         // Check for prevailing wind pung
         let prevailingWindName = prevailingWind.rawValue.replacingOccurrences(of: " Wind", with: "").lowercased() + "_wind"
         let prevailingWindTiles = windTiles.filter { $0.name == prevailingWindName }
         if prevailingWindTiles.count >= 3 {
-            windPoints += 1
+            prevailingWindPoints = 1
         }
         
-        return windPoints
+        return (seatWindPoints, prevailingWindPoints)
     }
     
     
@@ -695,7 +699,7 @@ class ScoreCalculator {
         print("Pair found: \(pair!.key)")
         
         // Remove the pair from consideration
-        var remainingGroups = groupedTiles.filter { $0.key != pair!.key }
+        let remainingGroups = groupedTiles.filter { $0.key != pair!.key }
         
         // Check for four sets of three identical tiles
         let chowTiles = remainingGroups.filter { $0.value.count == 4 }

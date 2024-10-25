@@ -42,7 +42,7 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "dot_1", suit: "dots", number: 1, isHonor: false) // The pair
         ]
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Thirteen Orphans Hand 十三么", "Thirteen Orphans hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Thirteen Orphans", "Thirteen Orphans hand did not validate correctly.")
     }
     func testInvalidThirteenOrphansHand() {
         let tiles = [
@@ -85,7 +85,7 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "dot_5", suit: "dots", number: 5, isHonor: false)
         ]
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Great Winds Hand 大四喜", "Valid Great Winds hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Great Winds Hand", "Valid Great Winds hand did not validate correctly.")
     }
     func testInvalidGreatWindsHand_MissingWindSet() {
         let tiles = [
@@ -129,7 +129,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Orphans Hand 么九", "Valid Orphans Hand was not recognized correctly.")
+        XCTAssertEqual(result.0, "Orphans Hand", "Valid Orphans Hand was not recognized correctly.")
         XCTAssertEqual(result.1, 10, "Orphans Hand points were not calculated correctly.")
     }
     func testInvalidOrphansHandWithPairs() {
@@ -172,7 +172,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "All Triplets Hand 對對糊", "Valid All Triplets hand was not recognized correctly.")
+        XCTAssertEqual(result.0, "All Triplets", "Valid All Triplets hand was not recognized correctly.")
         XCTAssertEqual(result.1, 3, "All Triplets Hand points were not calculated correctly.")
     }
     
@@ -197,7 +197,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: true, isConcealedHand: true)
-        XCTAssertEqual(result.0, "Nine Gates Hand 九蓮寶燈", "Valid Nine Gates Hand was not recognized correctly.")
+        XCTAssertEqual(result.0, "Nine Gates", "Valid Nine Gates Hand was not recognized correctly.")
         XCTAssertEqual(result.1, 10, "Nine Gates Hand points were not calculated correctly.")
     }
     func testInvalidNineGatesHand() {
@@ -251,7 +251,7 @@ class ScoreCalculatorTests: XCTestCase {
             isConcealedHand: true
         )
         
-        XCTAssertEqual(result.0, "All Honor Tiles Hand 字一色", "The hand should be recognized as All Honor Tiles.")
+        XCTAssertEqual(result.0, "All Honors", "The hand should be recognized as All Honor Tiles.")
         XCTAssertEqual(result.1, 10, "The hand should score 10 points for All Honor Tiles.")
     }
     func testInvalidAllHonorTilesHand() {
@@ -281,7 +281,7 @@ class ScoreCalculatorTests: XCTestCase {
             isConcealedHand: true
         )
         
-        XCTAssertNotEqual(result.0, "All Honor Tiles Hand 字一色", "The hand should not be recognized as All Honor Tiles.")
+        XCTAssertNotEqual(result.0, "All Honors", "The hand should not be recognized as All Honor Tiles.")
         XCTAssertNotEqual(result.1, 10, "The hand should not score 10 points for All Honor Tiles.")
     }
     
@@ -305,7 +305,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Great Dragons Hand 大三元", "Great Dragons Hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Great Dragons", "Great Dragons Hand did not validate correctly.")
         XCTAssertEqual(result.1, 8, "Points for Great Dragons Hand should be 8.")
     }
     func testInvalidGreatDragonsHand() {
@@ -351,7 +351,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Pure Hand 清一色", "Pure hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Pure Hand", "Pure hand did not validate correctly.")
     }
     func testPureHandInvalid() {
         let tiles = [
@@ -372,7 +372,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertNotEqual(result.0, "Pure Hand 清一色", "Invalid Pure Hand was not caught.")
+        XCTAssertNotEqual(result.0, "Pure Hand", "Invalid Pure Hand was not caught.")
     }
     
     
@@ -395,7 +395,7 @@ class ScoreCalculatorTests: XCTestCase {
             Tile(name: "dot_7", suit: "dots", number: 7, isHonor: false)
         ]
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Small Winds Hand 小四喜", "Valid Small Winds hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Small Winds", "Valid Small Winds hand did not validate correctly.")
     }
     func testInvalidSmallWindsHand_MissingPair() {
         let tiles = [
@@ -447,7 +447,7 @@ class ScoreCalculatorTests: XCTestCase {
             isConcealedHand: false
         )
         
-        XCTAssertEqual(result.0, "Small Dragons Hand 小三元", "Small Dragons Hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Small Dragons", "Small Dragons Hand did not validate correctly.")
         XCTAssertEqual(result.1, 5, "Points for Small Dragons Hand should be 5.")
     }
     func testInvalidSmallDragonsHand() {
@@ -501,7 +501,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Seven Pair Hand 七對子", "Seven pairs hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Seven Pairs", "Seven pairs hand did not validate correctly.")
     }
     func testInvalidSevenPairsHand() {
         let tiles = [
@@ -567,7 +567,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Mixed One Suit Hand 混一色", "Mixed One Suit hand did not validate correctly.")
+        XCTAssertEqual(result.0, "Mixed One Suit", "Mixed One Suit hand did not validate correctly.")
     }
     func testMixedOneSuitHandFourChows() {
         let tiles = [
@@ -598,7 +598,7 @@ class ScoreCalculatorTests: XCTestCase {
         )
         
         // Assertions
-        XCTAssertEqual(result.0, "Mixed One Suit Hand 混一色", "The hand should be recognized as Mixed One Suit.")
+        XCTAssertEqual(result.0, "Mixed One Suit", "The hand should be recognized as Mixed One Suit.")
         XCTAssertEqual(result.1, 3, "The hand should score 3 points for Mixed One Suit.")
     }
     func testInvalidMixedOneSuitHand() {
@@ -665,7 +665,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "All Triplets Hand 對對糊", "All Triplets hand did not validate correctly.")
+        XCTAssertEqual(result.0, "All Triplets", "All Triplets hand did not validate correctly.")
     }
     
     
@@ -689,7 +689,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "All Chow Hand 平糊", "All Chows hand did not validate correctly.")
+        XCTAssertEqual(result.0, "All Chows", "All Chows hand did not validate correctly.")
     }
     func testAllChowsHandOnesPair() {
         let tiles = [
@@ -710,7 +710,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "All Chow Hand 平糊", "All Chows with Ones Pair hand did not validate correctly.")
+        XCTAssertEqual(result.0, "All Chows", "All Chows with Ones Pair hand did not validate correctly.")
     }
     func testAllChowsHandSameChows() {
         let tiles = [
@@ -732,7 +732,7 @@ class ScoreCalculatorTests: XCTestCase {
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: true)
         
-        XCTAssertEqual(result.0, "All Chow Hand 平糊", "The hand should be recognized as All Chow Hand")
+        XCTAssertEqual(result.0, "All Chows", "The hand should be recognized as All Chow Hand")
     }
     func testInvalidAllChowsHand() {
         let tiles = [
@@ -777,7 +777,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Chicken Hand 雞糊", "The hand should be recognized as Chicken Hand.")
+        XCTAssertEqual(result.0, "Chicken Hand", "The hand should be recognized as Chicken Hand.")
     }
     func testChickenHandOnesPair() {
         let tiles = [
@@ -798,7 +798,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertEqual(result.0, "Chicken Hand 雞糊", "The hand should be recognized as Chicken Hand.")
+        XCTAssertEqual(result.0, "Chicken Hand", "The hand should be recognized as Chicken Hand.")
     }
     func testInvalidChickenHand() {
         let tiles = [
@@ -819,7 +819,7 @@ class ScoreCalculatorTests: XCTestCase {
         ]
         
         let result = scoreCalculator.validateHand(tiles: tiles, selectedSeatWind: .east, selectedPrevailingWind: .east, selectedFlowerTiles: [], isSelfDrawn: false, isConcealedHand: false)
-        XCTAssertNotEqual(result.0, "Chicken Hand 雞糊", "The hand should not be recognized as Chicken Hand.")
+        XCTAssertNotEqual(result.0, "Chicken Hand", "The hand should not be recognized as Chicken Hand.")
     }
     
 }

@@ -25,18 +25,47 @@ class HapticManager {
 
 struct SwipeSelectionView: View {
     @State private var rectangleStates = Array(repeating: Array(repeating: false, count: 4), count: 2)
-        @State private var isDragging = false
-        @State private var dragColor = false
-        @State private var activeRow: Int?
-        
-        private func updateRectangleState(row: Int, column: Int, to newState: Bool) {
-            if rectangleStates[row][column] != newState {
-                rectangleStates[row][column] = newState
-                HapticManager.shared.playHaptic()
-            }
+    @State private var isDragging = false
+    @State private var dragColor = false
+    @State private var activeRow: Int?
+    
+    private func updateRectangleState(row: Int, column: Int, to newState: Bool) {
+        if rectangleStates[row][column] != newState {
+            rectangleStates[row][column] = newState
+            HapticManager.shared.playHaptic()
         }
+    }
+    
+    let columns = [
+      GridItem(.adaptive(minimum: 42), alignment: .leading)
+    ]
         
         var body: some View {
+            
+            LazyVGrid(columns: columns, alignment: .center, spacing: 10) {
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+              Text("sup")
+                .border(Color.gray)
+            }
+            
+            
             GeometryReader { geometry in
                 VStack(spacing: 20) {
                     ForEach(0..<2) { row in

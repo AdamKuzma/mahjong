@@ -14,9 +14,14 @@ struct HandScoreView: View {
     @ObservedObject var viewModel: MahjongViewModel
     @Environment(\.dismiss) var dismiss
     
+    @Binding var currentDetent: PresentationDetent
+    @Binding var showBreakdown: Bool
+    
     private var totalPoints: Int {
-        viewModel.handPoints + viewModel.windPoints + viewModel.flowerPoints +
-        viewModel.dragonPoints + viewModel.selfDrawnPoints + viewModel.concealedHandPoints
+        let windPoints = viewModel.seatWindPoints + viewModel.prevailingWindPoints
+        let bonusPoints = viewModel.selfDrawnPoints + viewModel.concealedHandPoints
+        let basePoints = viewModel.handPoints + viewModel.flowerPoints + viewModel.dragonPoints
+        return windPoints + bonusPoints + basePoints
     }
     
     private var pointsMessage: String {
@@ -86,15 +91,91 @@ struct HandScoreView: View {
             return ""
         }
     }
+    
+    // Helper function to generate tags
+    private var tags: [String] {
+        var result: [String] = [viewModel.handMessage]
+
+        if viewModel.flowerPoints > 0 { result.append("Flowers") }
+        if viewModel.dragonPoints > 0 { result.append("Dragons") }
+        if viewModel.seatWindPoints > 0 { result.append("Seat Wind") }
+        if viewModel.prevailingWindPoints > 0 { result.append("Prevailing Wind") }
+        if viewModel.selfDrawnPoints > 0 { result.append("Self Drawn") }
+        if viewModel.concealedHandPoints > 0 { result.append("Concealed Hand") }
+
+        return result
+    }
+    
+    private func PointRow(label: String, points: Int, color: Color) -> some View {
+        HStack {
+            Text(label)
+                .font(.body)
+                .foregroundColor(color)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            Spacer()
+            Text("+\(points)")
+                .font(.body)
+                .foregroundColor(.white)
+        }
+    }
+    
+    private func PointBreakdownView() -> some View {
+        ScrollView {
+            VStack {
+                // Hand Points
+                if viewModel.handPoints > 0 || viewModel.handMessage == "Chicken Hand" {
+                    PointRow(label: "Hand Points", points: viewModel.handPoints, color: .white)
+                }
+                
+                // Flower Points
+                if viewModel.flowerPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Flower Points", points: viewModel.flowerPoints, color: .white)
+                }
+                
+                // Dragon Points
+                if viewModel.dragonPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Dragon Points", points: viewModel.dragonPoints, color: .white)
+                }
+                
+                // Seat Wind Points
+                if viewModel.seatWindPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Seat Wind Points", points: viewModel.seatWindPoints, color: .white)
+                }
+                
+                // Prevailing Wind Points
+                if viewModel.prevailingWindPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Prevailing Wind Points", points: viewModel.prevailingWindPoints, color: .white)
+                }
+                
+                // Self Drawn Points
+                if viewModel.selfDrawnPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Self Drawn", points: viewModel.selfDrawnPoints, color: .white)
+                }
+                
+                // Concealed Hand Points
+                if viewModel.concealedHandPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Concealed Hand", points: viewModel.concealedHandPoints, color: .white)
+                }
+                
+                // Total Points
+                if totalPoints > 0 {
+                    Divider().padding(.top, 8).padding(.bottom, 11)
+                    PointRow(label: "Total Points", points: totalPoints, color: .white)
+                }
+            }
+        }
+        .frame(height: 300)
+    }
 
     var body: some View {
         VStack(spacing: 20) {
-            
-            
-            // ------ Total Points ------
-            
             HStack {
-                
                 if viewModel.handPoints > 0 || viewModel.handMessage == "Chicken Hand 雞糊" {
                     VStack(spacing: 24) {
                         Text(handTypeEmoji)
@@ -112,20 +193,25 @@ struct HandScoreView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
-                            
-                        HStack {
-                            Text(viewModel.handMessage)
-                                .font(.system(size: 12))  // or .subheadline for smaller text
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color(red: 36/255, green: 36/255, blue: 36/255))  // Light gray background
-                                .cornerRadius(16)  // Rounded corners
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        }
                         
+                        TagCloudView(tags: tags)
+                            .onTapGesture {
+                                withAnimation {
+                                    showBreakdown.toggle()
+                                    if showBreakdown {
+                                        currentDetent = .large  // Set sheet to large when tapped
+                                    } else {
+                                        currentDetent = .medium  // Reset to medium when closed
+                                    }
+                                }
+                            }
                     }
                     .padding(.vertical, 24)
                 }
+            }
+            
+            if showBreakdown {
+                PointBreakdownView()
             }
             
             Spacer()  // This pushes everything up and the button to the bottom
@@ -143,131 +229,19 @@ struct HandScoreView: View {
                     .cornerRadius(10)
             }
             .padding(.bottom, 10)
-            
-            // ------ Point Breakdown ------
-            
-//            // Hand Points
-//            HStack {
-//                Text(viewModel.handMessage)
-//                    .font(.body)
-//                    .frame(maxWidth: .infinity, alignment: .leading)
-//                
-//                Spacer()
-//                
-//                if viewModel.handPoints > 0 || viewModel.handMessage == "Chicken Hand 雞糊" {
-//                    Text("\(viewModel.handPoints)")
-//                }
-//            }
-//            
-//            // Flower Points
-//            if viewModel.flowerPoints > 0 {
-//                Divider()
-//                
-//                HStack {
-//                    Text("Flower Points")
-//                        .font(.body)
-//                        .foregroundColor(.green)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                    
-//                    Spacer()
-//                    
-//                    Text("+\(viewModel.flowerPoints)")
-//                        .font(.body)
-//                        .foregroundColor(.green)
-//                }
-//            }
-//            
-//            // Dragon Points
-//            if viewModel.dragonPoints > 0 {
-//                Divider()
-//                
-//                HStack {
-//                    Text("Dragon Points")
-//                        .font(.body)
-//                        .foregroundColor(.orange)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                    
-//                    Spacer()
-//                    
-//                    Text("+\(viewModel.dragonPoints)")
-//                        .font(.body)
-//                        .foregroundColor(.orange)
-//                }
-//            }
-//            
-//            // Wind Points
-//            if viewModel.windPoints > 0 {
-//                Divider()
-//                
-//                HStack {
-//                    Text("Wind Points")
-//                        .font(.body)
-//                        .foregroundColor(.blue)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                    
-//                    Spacer()
-//                    
-//                    Text("+\(viewModel.windPoints)")
-//                        .font(.body)
-//                        .foregroundColor(.blue)
-//                }
-//            }
-//            
-//            // Self Drawn Points
-//            if viewModel.selfDrawnPoints > 0 {
-//                Divider()
-//                
-//                HStack {
-//                    Text("Self Drawn")
-//                        .font(.body)
-//                        .foregroundColor(.purple)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                    
-//                    Spacer()
-//                    
-//                    Text("+\(viewModel.selfDrawnPoints)")
-//                        .font(.body)
-//                        .foregroundColor(.purple)
-//                }
-//            }
-//            
-//            // Concealed Hand Points
-//            if viewModel.concealedHandPoints > 0 {
-//                Divider()
-//                
-//                HStack {
-//                    Text("Concealed Hand")
-//                        .font(.body)
-//                        .foregroundColor(.purple)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                    
-//                    Spacer()
-//                    
-//                    Text("+\(viewModel.concealedHandPoints)")
-//                        .font(.body)
-//                        .foregroundColor(.purple)
-//                }
-//            }
-//            
-//            // Total Points
-//            if viewModel.handPoints > 0 || viewModel.handMessage == "Chicken Hand 雞糊" {
-//                Divider()
-//                
-//                HStack {
-//                    Text("Total points")
-//                        .font(.headline)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                    
-//                    Spacer()
-//                    
-//                    Text("\(viewModel.handPoints + viewModel.windPoints + viewModel.flowerPoints + viewModel.dragonPoints + viewModel.selfDrawnPoints + viewModel.concealedHandPoints)")
-//                        .font(.headline)
-//                }
-//            }
-
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 26)
         .padding(.vertical, 42)
+        .onChange(of: currentDetent) { oldDetent, newDetent in
+            withAnimation {
+                if newDetent == .medium {
+                    showBreakdown = false
+                } else if newDetent == .large {
+                    showBreakdown = true
+                }
+            }
+        }
     }
 }
+
